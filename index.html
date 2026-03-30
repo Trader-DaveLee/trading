@@ -2,136 +2,170 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Ultimate Pro OMS v3.3</title>
+    <title>Ultimate Pro OMS v4</title>
     <style>
-        :root { /* 톤 다운된 고급 다크 테마 */ --bg: #0a0a0d; --panel: #111116; --text: #afafb5; --accent: #005bb5; --green: #1a8742; --red: #b52a2a; --border: #242429; --warn: #bf9f00; /* 채도 낮춘 골드 */ }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; font-size: 13px; }
-        .dashboard { max-width: 1300px; margin: 0 auto; display: grid; gap: 20px; grid-template-columns: 410px 1fr; }
-        @media (max-width: 950px) { .dashboard { grid-template-columns: 1fr; } }
+        :root { --bg: #0a0a0d; --panel: #111116; --text: #afafb5; --accent: #5e5ce6; --green: #30d158; --red: #ff453a; --border: #242429; --warn: #bf9f00; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; font-size: 13px; }
+        
+        /* Top Navigation Tabs */
+        .nav-bar { background: #000; padding: 10px 20px; display: flex; gap: 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .nav-btn { background: transparent; color: #666; border: none; font-size: 14px; font-weight: bold; cursor: pointer; padding: 8px 12px; border-radius: 6px; transition: 0.2s; }
+        .nav-btn:hover { color: #fff; background: #1a1a21; }
+        .nav-btn.active { color: #fff; background: var(--accent); }
+
+        .dashboard { max-width: 1400px; margin: 20px auto; padding: 0 20px; display: none; }
+        .dashboard.active { display: grid; gap: 20px; grid-template-columns: 410px 1fr; }
+        
+        /* Dashboard Tab Specific */
+        .ds-tab { max-width: 1400px; margin: 20px auto; padding: 0 20px; display: none; }
+        .ds-tab.active { display: block; }
         
         .panel { background: var(--panel); padding: 20px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 15px rgba(0,0,0,0.5); }
-        .panel-title { margin: 0 0 15px 0; font-size: 14px; color: #f0f0f5; border-bottom: 1px solid var(--border); padding-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .section-title { font-size: 10px; color: #555; text-transform: uppercase; margin: 15px 0 6px 0; font-weight: bold; letter-spacing: 1px; }
+        .panel-title { margin: 0 0 15px 0; font-size: 14px; color: #f0f0f5; border-bottom: 1px solid var(--border); padding-bottom: 8px; font-weight: 600; text-transform: uppercase; }
         
-        /* Stats & Filter */
-        .top-bar { grid-column: 1 / -1; display: flex; flex-direction: column; gap: 10px; }
-        .filter-row { display: flex; gap: 10px; align-items: center; background: var(--panel); padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border); }
-        .filter-row input[type="date"] { background: #1a1a21; border: 1px solid var(--border); color: #fff; padding: 5px; border-radius: 4px; color-scheme: dark; font-size: 11px; }
-        .stats-row { display: flex; gap: 12px; flex-wrap: wrap; }
-        .stat-box { flex: 1; min-width: 130px; background: var(--panel); padding: 12px; border-radius: 6px; text-align: center; border: 1px solid var(--border); }
-        .stat-val { font-size: 18px; font-weight: bold; margin-top: 4px; color: var(--accent); }
-        
-        /* Inputs */
+        /* Advanced Metrics */
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .m-box { background: #15151a; padding: 20px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
+        .m-title { font-size: 11px; color: #666; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
+        .m-val { font-size: 26px; font-weight: bold; color: #fff; }
+        .m-sub { font-size: 11px; color: #888; margin-top: 5px; }
+
+        /* Calendar */
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .cal-header button { background: transparent; border: 1px solid var(--border); color: #fff; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+        .cal-day-name { text-align: center; font-size: 11px; color: #666; font-weight: bold; padding-bottom: 10px; text-transform: uppercase; }
+        .cal-cell { background: #15151a; border: 1px solid var(--border); border-radius: 6px; min-height: 100px; padding: 10px; display: flex; flex-direction: column; cursor: pointer; transition: 0.1s; }
+        .cal-cell:hover { border-color: #444; background: #1a1a21; transform: translateY(-2px); }
+        .cal-cell.empty { background: transparent; border: none; cursor: default; }
+        .cal-cell.empty:hover { transform: none; background: transparent; }
+        .c-date { font-size: 12px; color: #888; font-weight: bold; align-self: flex-end; margin-bottom: 5px; }
+        .c-pnl { font-size: 15px; font-weight: bold; text-align: center; margin-top: auto; }
+        .c-trades { font-size: 10px; color: #666; text-align: center; margin-top: 5px; }
+        .cal-cell.profit { border-top: 3px solid var(--green); }
+        .cal-cell.loss { border-top: 3px solid var(--red); }
+        .cal-cell.profit .c-pnl { color: var(--green); }
+        .cal-cell.loss .c-pnl { color: var(--red); }
+
+        /* Form Elements (from previous) */
         .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
         .dyn-row { display: flex; gap: 4px; margin-bottom: 5px; align-items: center; }
-        input, select { padding: 5px 7px; background: #1a1a21; border: 1px solid #2c2c35; border-radius: 4px; color: #fff; text-align: right; font-family: monospace; font-size: 12px; }
-        input:focus, select:focus { outline: none; border-color: #444; background: #1e1e26; }
+        input, select { padding: 6px 8px; background: #1a1a21; border: 1px solid #2c2c35; border-radius: 4px; color: #fff; text-align: right; font-family: monospace; }
+        input:focus, select:focus { outline: none; border-color: var(--accent); }
         .w-mid { width: 90px; } .w-sml { width: 50px; } .w-full { width: 100%; box-sizing: border-box; text-align: left; margin-top: 8px;}
         input[type="text"] { text-align: left; }
-        
-        /* Results & Buttons */
-        .result-box { background: #141419; padding: 10px; border-radius: 6px; margin: 10px 0 20px 0; line-height: 1.5; border-left: 3px solid var(--accent); font-family: monospace; font-size: 11px; color: #888; }
-        .res-val { color: #fff; font-weight: bold; }
-        .warn-text { color: var(--warn); font-weight: bold; font-size: 10px; font-family: -apple-system, sans-serif; }
-        
-        button { padding: 5px 8px; background: #22222a; color: #ccc; border: 1px solid #33333c; border-radius: 4px; cursor: pointer; transition: 0.1s; font-weight: bold; font-size: 11px; }
-        button:hover { background: #2a2a35; color: #fff; }
-        .btn-add { background: transparent; color: #666; border-color: #333; width: 100%; margin-bottom: 10px; font-size: 10px; }
-        .btn-del { padding: 3px; background: transparent; border: none; color: #444; font-size: 13px; }
+        .btn-add { background: transparent; color: #666; border: 1px solid #333; width: 100%; margin-bottom: 10px; padding: 6px; cursor: pointer; border-radius: 4px; font-size: 11px; }
+        .btn-del { padding: 3px; background: transparent; border: none; color: #444; font-size: 13px; cursor: pointer; }
         .btn-del:hover { color: var(--red); }
+        .result-box { background: #141419; padding: 10px; border-radius: 6px; margin: 10px 0; border-left: 3px solid var(--accent); font-family: monospace; font-size: 11px; color: #888; }
+        .res-val { color: #fff; font-weight: bold; }
         
         .action-group { display: flex; gap: 8px; margin-top: 15px; }
-        .btn-open { flex: 1; background: var(--accent); border: none; padding: 10px; font-size: 12px; color: #fff; border-radius: 4px; }
-        .btn-close { flex: 1; background: var(--red); border: none; padding: 10px; font-size: 12px; color: #fff; border-radius: 4px; }
+        .btn-open { flex: 1; background: var(--accent); border: none; padding: 10px; font-size: 12px; color: #fff; border-radius: 4px; cursor: pointer; font-weight:bold; }
+        .btn-close { flex: 1; background: var(--red); border: none; padding: 10px; font-size: 12px; color: #fff; border-radius: 4px; cursor: pointer; font-weight:bold;}
         
-        /* Table */
         .table-wrap { overflow-x: auto; max-height: 600px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; text-align: right; white-space: nowrap; font-size: 12px; }
         th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
-        th { background: #141419; color: #666; position: sticky; top: 0; z-index: 2; font-size: 10px; font-weight: 600; text-transform: uppercase; }
+        th { background: #141419; color: #666; position: sticky; top: 0; font-size: 10px; }
         tr:hover { background-color: #1a1a21; cursor: pointer; }
-        .badge-open { color: var(--warn); border: 1px solid var(--warn); padding: 1px 4px; border-radius: 3px; font-size: 9px; font-weight: bold; }
-        .badge-closed { color: #555; border: 1px solid #333; padding: 1px 4px; border-radius: 3px; font-size: 9px; }
         .win { color: var(--green); } .loss { color: var(--red); }
     </style>
 </head>
 <body>
 
-<div class="dashboard">
-    <div class="top-bar">
-        <div class="filter-row">
-            <span style="color:#666; font-weight:bold; font-size:10px;">DATE FILTER</span>
-            <input type="date" id="fStart" onchange="renderHistory()"> <span style="color:#444;">~</span> <input type="date" id="fEnd" onchange="renderHistory()">
-            <button onclick="clearFilter()" style="font-size:10px; padding: 4px 6px;">RESET</button>
+<div class="nav-bar">
+    <button class="nav-btn active" onclick="switchTab('tab-dashboard')" id="btn-tab-dashboard">📊 Dashboard</button>
+    <button class="nav-btn" onclick="switchTab('tab-execution')" id="btn-tab-execution">⚡ Execution & Journal</button>
+</div>
+
+<div id="tab-dashboard" class="ds-tab active">
+    
+    <div class="metrics-grid">
+        <div class="m-box">
+            <div class="m-title">Net P&L</div>
+            <div class="m-val" id="db_pnl">$0.00</div>
+            <div class="m-sub" id="db_pnl_sub">Total Profit/Loss</div>
         </div>
-        <div class="stats-row">
-            <div class="stat-box">Trades (Closed)<div class="stat-val" id="stTrades">0</div></div>
-            <div class="stat-box">Win Rate<div class="stat-val" id="stWin">0.0%</div></div>
-            <div class="stat-box">Net R<div class="stat-val" id="stR">0.00 R</div></div>
-            <div class="stat-box">Net PnL<div class="stat-val" id="stPnl">$0.00</div></div>
+        <div class="m-box">
+            <div class="m-title">Profit Factor</div>
+            <div class="m-val" id="db_pf" style="color:#fff;">0.00</div>
+            <div class="m-sub">Gross Profit / Gross Loss</div>
+        </div>
+        <div class="m-box">
+            <div class="m-title">Win Rate</div>
+            <div class="m-val" id="db_winrate" style="color:var(--accent);">0.0%</div>
+            <div class="m-sub" id="db_winrate_sub">0 W / 0 L</div>
+        </div>
+        <div class="m-box">
+            <div class="m-title">Expectancy</div>
+            <div class="m-val" id="db_expectancy">$0.00</div>
+            <div class="m-sub">Expected return per trade</div>
         </div>
     </div>
 
     <div class="panel">
-        <input type="hidden" id="editId" value="">
-        
-        <div class="panel-title" style="color:var(--accent);">1. ENTRY STRATEGY</div>
-        <div class="row"><span>Ticker (Symbol)</span> <input type="text" id="ticker" class="w-mid" placeholder="e.g., BTCUSDT"></div>
-        
-        <div class="row"><span>Entry Setup</span> 
-            <div style="display:flex; gap:5px;">
-                <select id="setupEntry" style="width:130px;"></select>
-                <button onclick="manageSetup('E')" style="padding:3px 5px;">⚙️</button>
-            </div>
+        <div class="cal-header">
+            <button onclick="changeMonth(-1)">◀ Prev</button>
+            <h2 style="margin:0; color:#fff;" id="cal-month-title">June 2024</h2>
+            <button onclick="changeMonth(1)">Next ▶</button>
         </div>
-
-        <div class="row"><span>Seed ($) / Risk (%)</span> <div><input type="number" id="acc" class="w-mid" value="10000" oninput="calc()"> <input type="number" id="risk" class="w-sml" value="0.5" step="0.1" oninput="calc()"></div></div>
-        <div class="row"><span>Lev(x) / Maker / Taker %</span> <div><input type="number" id="lev" class="w-sml" value="10" oninput="calc()"> <input type="number" id="fM" class="w-sml" value="0.02" oninput="calc()"> <input type="number" id="fT" class="w-sml" value="0.05" oninput="calc()"></div></div>
-        <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">
-        <div class="row"><span>Position / Initial SL</span> <div><select id="dir" class="w-sml" onchange="calc()"><option value="1">LONG</option><option value="-1">SHORT</option></select> <input type="number" id="sl" class="w-mid" placeholder="SL Price" oninput="calc()"> <select id="slType" onchange="calc()"><option value="T">Tkr</option><option value="M">Mkr</option></select></div></div>
         
-        <div class="section-title">Scaling-in (Entries)</div>
+        <div class="cal-grid">
+            <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div>
+            <div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
+        </div>
+        <div class="cal-grid" id="cal-days">
+            </div>
+    </div>
+</div>
+
+<div id="tab-execution" class="dashboard">
+    <div class="panel">
+        <input type="hidden" id="editId" value="">
+        <div class="panel-title" style="color:var(--accent);">1. ENTRY STRATEGY</div>
+        <div class="row"><span>Ticker</span> <input type="text" id="ticker" class="w-mid" placeholder="BTCUSDT"></div>
+        <div class="row"><span>Entry Setup</span> <select id="setupEntry" style="width:130px;"></select></div>
+        <div class="row"><span>Seed($)/Risk(%)</span> <div><input type="number" id="acc" class="w-mid" value="10000" oninput="calc()"> <input type="number" id="risk" class="w-sml" value="0.5" oninput="calc()"></div></div>
+        <div class="row"><span>Lev/Mkr/Tkr(%)</span> <div><input type="number" id="lev" class="w-sml" value="10" oninput="calc()"> <input type="number" id="fM" class="w-sml" value="0.02" oninput="calc()"> <input type="number" id="fT" class="w-sml" value="0.05" oninput="calc()"></div></div>
+        <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">
+        <div class="row"><span>Pos / Init SL</span> <div><select id="dir" class="w-sml" onchange="calc()"><option value="1">LONG</option><option value="-1">SHORT</option></select> <input type="number" id="sl" class="w-mid" placeholder="SL" oninput="calc()"> <select id="slType" onchange="calc()"><option value="T">Tkr</option><option value="M">Mkr</option></select></div></div>
+        
+        <div style="font-size:10px; color:#666; font-weight:bold; margin:10px 0 5px;">SCALING-IN</div>
         <div id="entries_container"></div>
         <button class="btn-add" onclick="addEntry()">+ Add Entry Level</button>
-        <div class="result-box" id="entry_res">Awaiting valid entry & SL parameters...</div>
+        <div class="result-box" id="entry_res">Awaiting parameters...</div>
 
         <div class="panel-title" style="color:var(--warn); margin-top:20px;">2. EXIT STRATEGY</div>
-        
-        <div class="row"><span>Exit Setup</span> 
-            <div style="display:flex; gap:5px;">
-                <select id="setupExit" style="width:130px;"></select>
-                <button onclick="manageSetup('X')" style="padding:3px 5px;">⚙️</button>
-            </div>
-        </div>
-        <div class="section-title">Scaling-out (Exits)</div>
+        <div class="row"><span>Exit Setup</span> <select id="setupExit" style="width:130px;"></select></div>
+        <div style="font-size:10px; color:#666; font-weight:bold; margin:10px 0 5px;">SCALING-OUT</div>
         <div id="exits_container"></div>
-        <button class="btn-add" style="color:var(--warn); border-color:#444;" onclick="addExit()">+ Add Exit Level</button>
-        <div class="result-box" id="exit_res" style="border-left-color:var(--warn); color:#888;">Exits not configured.</div>
+        <button class="btn-add" onclick="addExit()">+ Add Exit Level</button>
+        <div class="result-box" id="exit_res">Exits not configured.</div>
 
         <div class="panel-title" style="color:#eee; margin-top:20px;">3. TRADING DETAILS</div>
-        <div class="row"><span>Fine-tuning (+/- $)</span> <input type="number" id="fineTune" class="w-mid" value="0" placeholder="e.g., -1.50" oninput="calc()"></div>
-        <input type="text" id="memo" class="w-full" placeholder="Memo..." style="margin-top:10px;">
+        <div class="row"><span>Fine-tuning(+/-$)</span> <input type="number" id="fineTune" class="w-mid" value="0" oninput="calc()"></div>
+        <input type="text" id="memo" class="w-full" placeholder="Memo...">
         
         <div class="action-group">
             <button class="btn-open" id="btnOpen" onclick="saveTrade('OPEN')">🟢 OPEN / UPDATE</button>
             <button class="btn-close" id="btnClose" onclick="saveTrade('CLOSED')">🔴 CLOSE POSITION</button>
         </div>
-        <button id="btnCancel" style="width:100%; margin-top:10px; display:none; background:none; border:1px dashed #444; color:#666;" onclick="cancelEdit()">CANCEL EDIT</button>
+        <button id="btnCancel" style="width:100%; margin-top:10px; display:none; background:none; border:1px dashed #444; color:#666; padding:8px;" onclick="cancelEdit()">CANCEL EDIT</button>
     </div>
 
     <div class="panel">
-        <div class="panel-title" style="display:flex; justify-content:space-between;">
+        <div class="panel-title" style="display:flex; justify-content:space-between; align-items:center;">
             TRADE HISTORY
-            <div style="display:flex; gap:5px;">
-                <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importData(event)">
-                <button onclick="document.getElementById('importFile').click()" style="font-size:10px; padding: 4px 6px;">IMPORT</button>
-                <button onclick="exportData()" style="font-size:10px; padding: 4px 6px;">EXPORT</button>
+            <div>
+                <input type="date" id="fStart" style="padding:4px;" onchange="renderHistory()"> ~ <input type="date" id="fEnd" style="padding:4px;" onchange="renderHistory()">
+                <button onclick="clearFilter()" style="padding:4px 6px;">ALL</button>
             </div>
         </div>
         <div class="table-wrap">
             <table>
                 <thead>
-                    <tr><th>STATUS</th><th>DATE</th><th>TICKER</th><th>POS</th><th>AVG ENTRY</th><th>AVG EXIT</th><th>NET PnL</th><th>NET R</th><th>X</th></tr>
+                    <tr><th>STAT</th><th>DATE</th><th>TICKER</th><th>POS</th><th>AVG IN</th><th>AVG OUT</th><th>PnL</th><th>R</th></tr>
                 </thead>
                 <tbody id="history_body"></tbody>
             </table>
@@ -140,86 +174,142 @@
 </div>
 
 <script>
-    // --- Data & State ---
+    // --- Data Management (Reuse v3.3 storage for compatibility) ---
     let trades = JSON.parse(localStorage.getItem('oms_trades_v3_3')) || [];
-    // 진입/청산 셋업 분리 저장
     let setupsE = JSON.parse(localStorage.getItem('oms_setups_e_v3_3')) || ["BREAKOUT", "OBV SIGNAL", "MACRO"];
     let setupsX = JSON.parse(localStorage.getItem('oms_setups_x_v3_3')) || ["VWMA 지지실패", "1.5R 도달", "trailing STOP"];
     
     let entries = [{ price: '', type: 'M', weight: 100 }];
     let exits = [];
 
-    // --- Initialization ---
+    // --- Tab System ---
+    function switchTab(tabId) {
+        document.getElementById('tab-dashboard').classList.remove('active');
+        document.getElementById('tab-execution').classList.remove('active');
+        document.getElementById('btn-tab-dashboard').classList.remove('active');
+        document.getElementById('btn-tab-execution').classList.remove('active');
+        
+        document.getElementById(tabId).classList.add('active');
+        document.getElementById('btn-' + tabId).classList.add('active');
+        
+        if(tabId === 'tab-dashboard') updateDashboard();
+    }
+
+    // --- Init ---
     function init() {
-        renderSetupDropdowns();
-        renderEntries();
-        renderExits();
-        renderHistory();
-        calc();
+        let selE = document.getElementById('setupEntry');
+        let selX = document.getElementById('setupExit');
+        setupsE.forEach(s => selE.appendChild(new Option(s, s)));
+        setupsX.forEach(s => selX.appendChild(new Option(s, s)));
+        
+        renderEntries(); renderExits(); renderHistory(); calc(); updateDashboard();
     }
 
-    // --- Setup Management ( 고도화 ) ---
-    function renderSetupDropdowns() {
-        populateDropdown('setupEntry', setupsE);
-        populateDropdown('setupExit', setupsX);
+    // --- Dashboard & Calendar Engine ---
+    let currDate = new Date();
+    
+    function changeMonth(dir) {
+        currDate.setMonth(currDate.getMonth() + dir);
+        updateDashboard();
     }
-    function populateDropdown(id, data) {
-        let sel = document.getElementById(id); sel.innerHTML = '';
-        data.forEach(s => { let opt = document.createElement('option'); opt.value = s; opt.innerText = s; sel.appendChild(opt); });
-    }
-    function manageSetup(type) {
-        let n = type === 'E' ? 'Entry' : 'Exit';
-        let arr = type === 'E' ? setupsE : setupsX;
-        let id = type === 'E' ? 'setupEntry' : 'setupExit';
-        let act = prompt(`Manage ${n} setups.\nType 'ADD' to add, 'DEL' to delete current:`).toUpperCase();
-        if(act === 'ADD') {
-            let nS = prompt(`New ${n} Setup Name:`);
-            if(nS) { arr.push(nS.toUpperCase()); saveSetups(); }
-        } else if(act === 'DEL') {
-            let v = document.getElementById(id).value;
-            arr = type === 'E' ? setupsE.filter(s=>s!==v) : setupsX.filter(s=>s!==v);
-            // Re-assign back because filter creates new array
-            if(type === 'E') setupsE = arr; else setupsX = arr;
-            saveSetups();
+
+    function updateDashboard() {
+        // 1. Calculate Advanced Metrics
+        let closedTrades = trades.filter(t => t.status === 'CLOSED');
+        let grossProfit = 0, grossLoss = 0, wins = 0, losses = 0;
+        
+        closedTrades.forEach(t => {
+            let pnl = t.math.pnl;
+            if(pnl >= 0) { grossProfit += pnl; wins++; }
+            else { grossLoss += Math.abs(pnl); losses++; }
+        });
+
+        let netPnl = grossProfit - grossLoss;
+        let pf = grossLoss === 0 ? (grossProfit > 0 ? "MAX" : "0.00") : (grossProfit / grossLoss).toFixed(2);
+        let winRate = closedTrades.length > 0 ? (wins / closedTrades.length) : 0;
+        let avgWin = wins > 0 ? grossProfit / wins : 0;
+        let avgLoss = losses > 0 ? grossLoss / losses : 0;
+        let expectancy = (winRate * avgWin) - ((1 - winRate) * avgLoss);
+
+        // Update DOM Metrics
+        let pnlEl = document.getElementById('db_pnl');
+        pnlEl.innerText = (netPnl >= 0 ? "+$" : "-$") + Math.abs(netPnl).toFixed(2);
+        pnlEl.style.color = netPnl >= 0 ? "var(--green)" : "var(--red)";
+        
+        document.getElementById('db_pf').innerText = pf;
+        document.getElementById('db_winrate').innerText = (winRate * 100).toFixed(1) + "%";
+        document.getElementById('db_winrate_sub').innerText = `${wins} W / ${losses} L`;
+        
+        let expEl = document.getElementById('db_expectancy');
+        expEl.innerText = (expectancy >= 0 ? "+$" : "-$") + Math.abs(expectancy).toFixed(2);
+        expEl.style.color = expectancy >= 0 ? "var(--green)" : "var(--red)";
+
+        // 2. Render Calendar
+        let y = currDate.getFullYear();
+        let m = currDate.getMonth();
+        document.getElementById('cal-month-title').innerText = new Date(y, m).toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
+        
+        let firstDay = new Date(y, m, 1).getDay();
+        let daysInMonth = new Date(y, m + 1, 0).getDate();
+        
+        let calHtml = '';
+        // Empty slots
+        for(let i = 0; i < firstDay; i++) { calHtml += `<div class="cal-cell empty"></div>`; }
+        
+        // Days
+        for(let d = 1; d <= daysInMonth; d++) {
+            // Format YYYY-MM-DD
+            let dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            let dayTrades = closedTrades.filter(t => t.date === dateStr);
+            
+            if(dayTrades.length === 0) {
+                calHtml += `<div class="cal-cell" onclick="jumpToHistory('${dateStr}')"><div class="c-date">${d}</div></div>`;
+            } else {
+                let dayPnl = dayTrades.reduce((sum, t) => sum + t.math.pnl, 0);
+                let dayWins = dayTrades.filter(t => t.math.pnl >= 0).length;
+                let dayWR = ((dayWins / dayTrades.length) * 100).toFixed(0);
+                let cls = dayPnl >= 0 ? 'profit' : 'loss';
+                
+                calHtml += `
+                    <div class="cal-cell ${cls}" onclick="jumpToHistory('${dateStr}')">
+                        <div class="c-date">${d}</div>
+                        <div class="c-pnl">${dayPnl >= 0 ? '+$'+dayPnl.toFixed(2) : '-$'+Math.abs(dayPnl).toFixed(2)}</div>
+                        <div class="c-trades">${dayTrades.length} trades (${dayWR}%)</div>
+                    </div>`;
+            }
         }
-    }
-    function saveSetups() {
-        localStorage.setItem('oms_setups_e_v3_3', JSON.stringify(setupsE));
-        localStorage.setItem('oms_setups_x_v3_3', JSON.stringify(setupsX));
-        renderSetupDropdowns();
+        document.getElementById('cal-days').innerHTML = calHtml;
     }
 
-    // --- Dynamic DOM Generators ---
+    function jumpToHistory(dateStr) {
+        document.getElementById('fStart').value = dateStr;
+        document.getElementById('fEnd').value = dateStr;
+        switchTab('tab-execution');
+        renderHistory();
+    }
+
+    // --- OMS Logic (Same as v3.3) ---
     function renderEntries() {
         document.getElementById('entries_container').innerHTML = entries.map((e, i) => `
             <div class="dyn-row">
                 <input type="number" style="flex:1;" placeholder="Price" value="${e.price}" oninput="entries[${i}].price=this.value; calc()">
-                <select onchange="entries[${i}].type=this.value; calc()">
-                    <option value="M" ${e.type==='M'?'selected':''}>Mkr</option>
-                    <option value="T" ${e.type==='T'?'selected':''}>Tkr</option>
-                </select>
+                <select onchange="entries[${i}].type=this.value; calc()"><option value="M" ${e.type==='M'?'selected':''}>Mkr</option><option value="T" ${e.type==='T'?'selected':''}>Tkr</option></select>
                 <input type="number" class="w-sml" placeholder="Wt%" value="${e.weight}" oninput="entries[${i}].weight=this.value; calc()">
                 <button class="btn-del" onclick="entries.splice(${i},1); renderEntries(); calc()">✕</button>
-            </div>
-        `).join('');
+            </div>`).join('');
     }
     function renderExits() {
         document.getElementById('exits_container').innerHTML = exits.map((x, i) => `
             <div class="dyn-row">
                 <input type="number" style="flex:1;" placeholder="Price" value="${x.price}" oninput="exits[${i}].price=this.value; calc()">
-                <select onchange="exits[${i}].type=this.value; calc()">
-                    <option value="M" ${x.type==='M'?'selected':''}>Mkr</option>
-                    <option value="T" ${x.type==='T'?'selected':''}>Tkr</option>
-                </select>
+                <select onchange="exits[${i}].type=this.value; calc()"><option value="M" ${x.type==='M'?'selected':''}>Mkr</option><option value="T" ${x.type==='T'?'selected':''}>Tkr</option></select>
                 <input type="number" class="w-sml" placeholder="Wt%" value="${x.weight}" oninput="exits[${i}].weight=this.value; calc()">
                 <button class="btn-del" onclick="exits.splice(${i},1); renderExits(); calc()">✕</button>
-            </div>
-        `).join('');
+            </div>`).join('');
     }
     function addEntry() { entries.push({ price: '', type: 'M', weight: 0 }); renderEntries(); }
     function addExit() { exits.push({ price: '', type: 'M', weight: 0 }); renderExits(); }
 
-    // --- Core Math Engine ---
     function calc() {
         let acc = parseFloat(document.getElementById('acc').value) || 0;
         let rPct = parseFloat(document.getElementById('risk').value) || 0;
@@ -233,12 +323,10 @@
 
         let rAmt = acc * (rPct / 100);
         let sEWt = entries.reduce((s, e) => s + (parseFloat(e.weight)||0), 0);
-        
         let eRes = document.getElementById('entry_res');
         let xRes = document.getElementById('exit_res');
         let res = { size: 0, avgE: 0, avgX: 0, pnl: 0, r: 0 };
 
-        // 1. Entry Math
         if(sEWt === 100 && sl > 0 && entries.every(e => e.price > 0)) {
             let tCost = 0; let slErr = false;
             entries.forEach(e => {
@@ -250,32 +338,27 @@
             });
             tCost += sl * (slT === 'M' ? fM : fT);
             
-            if(slErr) { eRes.innerHTML = `<span class="warn-text">⚠️ Direction/SL Mismatch</span>`; }
+            if(slErr) { eRes.innerHTML = `<span style="color:var(--red);">⚠️ SL Direction Mismatch</span>`; }
             else {
                 res.size = rAmt / tCost;
                 let marg = (res.size * res.avgE) / lev;
                 let sld = (marg / acc) * 100;
-                eRes.innerHTML = `Qty: <span class="res-val">${res.size.toFixed(5)}</span> | AvgE: <span class="res-val">${res.avgE.toFixed(2)}</span><br>Margin: $${marg.toFixed(2)} (<span class="res-val">${sld.toFixed(1)}%</span> Slider ${sld>100?'<span class="warn-text">!</span>':''})`;
+                eRes.innerHTML = `Qty: <span class="res-val">${res.size.toFixed(5)}</span> | AvgE: <span class="res-val">${res.avgE.toFixed(2)}</span><br>Margin: $${marg.toFixed(2)} (<span class="res-val">${sld.toFixed(1)}%</span> App Slider)`;
             }
         } else { eRes.innerHTML = "Awaiting valid inputs..."; }
 
-        // 2. Exit Math
         let sXWt = exits.reduce((s, x) => s + (parseFloat(x.weight)||0), 0);
         if(res.size > 0 && exits.length > 0) {
             let gPnl = 0; let tFee = 0;
-            // Entry fees for total size
             entries.forEach(e => tFee += e.price * res.size * (e.weight/100) * (e.type==='M'?fM:fT));
             exits.forEach(x => {
                 if(x.price > 0) {
                     let p = parseFloat(x.price); let w = parseFloat(x.weight)/100;
-                    res.avgX += p * (w / (sXWt/100)); // weighted avg of exits
+                    res.avgX += p * (w / (sXWt/100));
                     gPnl += (p - res.avgE) * dir * (res.size * w);
-                    tFee += p * (res.size * w) * (x.type==='M'?fM:fT); // exit fees
+                    tFee += p * (res.size * w) * (x.type==='M'?fM:fT);
                 }
             });
-            // Prorate entry fee if partially closed (though this sizer assumes full eventual exit at AvgX conceptually)
-            // For PMS accuracy, we calculate PnL of closed portion including pro-rated full entry fees + pro-rated full exit fees concept.
-            // Simplified actual PnL logic:
             res.pnl = (gPnl - (tFee * (sXWt/100))) + fine; 
             res.r = res.pnl / rAmt;
             xRes.innerHTML = `AvgX: <span class="res-val">${res.avgX.toFixed(2)}</span> (${sXWt}%)<br>Net PnL: <span class="${res.pnl>=0?'win':'loss'}">$${res.pnl.toFixed(2)}</span> (${res.r.toFixed(2)}R)`;
@@ -283,133 +366,76 @@
         return res;
     }
 
-    // --- Data Management ---
     function saveTrade(stat) {
         let r = calc();
         if(r.size === 0) return alert("Calculate entry first.");
-        let sXWt = exits.reduce((s, x) => s + (parseFloat(x.weight)||0), 0);
-        if(stat === 'CLOSED' && sXWt !== 100) return alert("Total Exit Weight must be 100% to CLOSE.");
+        if(stat === 'CLOSED' && exits.reduce((s, x) => s + (parseFloat(x.weight)||0), 0) !== 100) return alert("Total Exit Weight must be 100% to CLOSE.");
 
         let id = document.getElementById('editId').value;
         let trade = {
             id: id ? parseInt(id) : Date.now(),
             status: stat,
             date: new Date().toISOString().split('T')[0],
-            dispDate: new Date().toLocaleDateString('ko-KR', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}),
+            dispDate: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}),
             ticker: document.getElementById('ticker').value.toUpperCase() || 'UNKNOWN',
             dir: parseInt(document.getElementById('dir').value),
-            // 진입/청산 전략 독립 저장
-            setupEntry: document.getElementById('setupEntry').value,
-            setupExit: document.getElementById('setupExit').value,
-            entries: JSON.parse(JSON.stringify(entries)),
-            exits: JSON.parse(JSON.stringify(exits)),
-            sl: document.getElementById('sl').value,
-            slT: document.getElementById('slType').value,
-            fine: parseFloat(document.getElementById('fineTune').value),
-            memo: document.getElementById('memo').value,
+            setupEntry: document.getElementById('setupEntry').value, setupExit: document.getElementById('setupExit').value,
+            entries: JSON.parse(JSON.stringify(entries)), exits: JSON.parse(JSON.stringify(exits)),
+            sl: document.getElementById('sl').value, slT: document.getElementById('slType').value,
+            fine: parseFloat(document.getElementById('fineTune').value), memo: document.getElementById('memo').value,
             math: r
         };
 
-        if(id) trades = trades.map(t => t.id === trade.id ? trade : t);
-        else trades.unshift(trade);
-        
+        if(id) trades = trades.map(t => t.id === trade.id ? trade : t); else trades.unshift(trade);
         localStorage.setItem('oms_trades_v3_3', JSON.stringify(trades));
-        cancelEdit(); renderHistory();
+        cancelEdit(); renderHistory(); updateDashboard();
     }
 
     function loadIntoForm(id) {
         let t = trades.find(x => x.id === id); if(!t) return;
         document.getElementById('editId').value = t.id;
         document.getElementById('ticker').value = t.ticker;
-        
-        // 버전 호환성 처리: 옛날 데이터는 Exit Setup으로 일단 간주
-        renderSetupDropdowns();
-        document.getElementById('setupEntry').value = t.setupEntry || setupsE[0];
-        document.getElementById('setupExit').value = t.setupExit || t.setup || setupsX[0]; 
-        
-        document.getElementById('dir').value = t.dir;
-        document.getElementById('sl').value = t.sl;
-        document.getElementById('slType').value = t.slT;
-        document.getElementById('fineTune').value = t.fine;
-        document.getElementById('memo').value = t.memo;
-        entries = JSON.parse(JSON.stringify(t.entries));
-        exits = JSON.parse(JSON.stringify(t.exits));
+        document.getElementById('setupEntry').value = t.setupEntry; document.getElementById('setupExit').value = t.setupExit; 
+        document.getElementById('dir').value = t.dir; document.getElementById('sl').value = t.sl; document.getElementById('slType').value = t.slT;
+        document.getElementById('fineTune').value = t.fine; document.getElementById('memo').value = t.memo;
+        entries = JSON.parse(JSON.stringify(t.entries)); exits = JSON.parse(JSON.stringify(t.exits));
         renderEntries(); renderExits(); calc();
-        document.getElementById('btnOpen').innerText = "🟢 UPDATE POSITION";
-        document.getElementById('btnCancel').style.display = "block";
+        document.getElementById('btnOpen').innerText = "🟢 UPDATE POSITION"; document.getElementById('btnCancel').style.display = "block";
     }
 
     function cancelEdit() {
         document.getElementById('editId').value = "";
         entries = [{ price: '', type: 'M', weight: 100 }]; exits = [];
-        document.getElementById('ticker').value = ""; document.getElementById('sl').value = "";
-        document.getElementById('fineTune').value = 0; document.getElementById('memo').value = "";
+        document.getElementById('ticker').value = ""; document.getElementById('sl').value = ""; document.getElementById('fineTune').value = 0; document.getElementById('memo').value = "";
         renderEntries(); renderExits(); calc();
-        document.getElementById('btnOpen').innerText = "🟢 OPEN / UPDATE";
-        document.getElementById('btnCancel').style.display = "none";
+        document.getElementById('btnOpen').innerText = "🟢 OPEN / UPDATE"; document.getElementById('btnCancel').style.display = "none";
     }
 
     function renderHistory() {
         let tbody = document.getElementById('history_body'); tbody.innerHTML = '';
-        let start = document.getElementById('fStart').value;
-        let end = document.getElementById('fEnd').value;
+        let start = document.getElementById('fStart').value; let end = document.getElementById('fEnd').value;
         let filtered = trades;
         if(start) filtered = filtered.filter(t => t.date >= start);
         if(end) filtered = filtered.filter(t => t.date <= end);
 
-        let tPnl = 0; let tR = 0; let wins = 0; let closed = 0;
-
         filtered.forEach(t => {
-            if(t.status === 'CLOSED') { closed++; tPnl += t.math.pnl; tR += t.math.r; if(t.math.pnl > 0) wins++; }
+            let m = t.math;
             let tr = document.createElement('tr');
             tr.onclick = () => loadIntoForm(t.id);
-            // 버전 호환성: 옛날 데이터는 math 오브젝트가 없을 수 있음
-            let m = t.math || {avgE: 0, avgX: 0, pnl: 0, r: 0};
-            
             tr.innerHTML = `
-                <td><span class="${t.status==='OPEN'?'badge-open':'badge-closed'}">${t.status}</span></td>
-                <td><span style="color:#555; font-size:10px;">${t.dispDate}</span></td>
-                <td style="font-weight:bold;">${t.ticker}</td><td class="${t.dir===1?'win':'loss'}">${t.dir===1?'Long':'Short'}</td>
+                <td><span style="color:${t.status==='OPEN'?'var(--warn)':'#666'}; font-weight:bold;">${t.status}</span></td>
+                <td><span style="color:#666;">${t.dispDate}</span></td>
+                <td style="font-weight:bold; color:#fff;">${t.ticker}</td>
+                <td class="${t.dir===1?'win':'loss'}">${t.dir===1?'Long':'Short'}</td>
                 <td>${m.avgE.toFixed(2)}</td><td>${m.avgX > 0 ? m.avgX.toFixed(2) : '-'}</td>
                 <td class="${m.pnl>=0?'win':'loss'}">${t.status==='OPEN'?'-':'$'+m.pnl.toFixed(2)}</td>
                 <td class="${m.pnl>=0?'win':'loss'}">${t.status==='OPEN'?'-':m.r.toFixed(2)+'R'}</td>
-                <td><button onclick="event.stopPropagation(); if(confirm('Del?')){trades=trades.filter(x=>x.id!==${t.id}); localStorage.setItem('oms_trades_v3_3', JSON.stringify(trades)); renderHistory();}" style="border:none; background:none; color:#333;">✕</button></td>
             `;
             tbody.appendChild(tr);
         });
-        document.getElementById('stTrades').innerText = closed;
-        document.getElementById('stWin').innerText = closed > 0 ? (wins/closed*100).toFixed(1)+'%' : '0.0%';
-        document.getElementById('stR').innerText = tR.toFixed(2)+' R';
-        document.getElementById('stPnl').innerText = '$'+tPnl.toFixed(2);
-    }
-
-    function exportData() {
-        let blob = new Blob([JSON.stringify(trades)], {type:'application/json'});
-        let link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `OMS_Pro_v3_3_${new Date().toISOString().split('T')[0]}.json`;
-        link.click();
-    }
-
-    function importData(e) {
-        let reader = new FileReader();
-        reader.onload = (ev) => {
-            try {
-                let d = JSON.parse(ev.target.result);
-                // 버전 호환성: 배열이면 무조건 수용 (데이터 구조 변경은 loadIntoForm 등에서 처리)
-                if(Array.isArray(d)) {
-                    trades = d;
-                    localStorage.setItem('oms_trades_v3_3', JSON.stringify(trades));
-                    renderHistory();
-                    alert("Data Restored!");
-                }
-            } catch(err) { alert("Invalid File Format"); }
-        };
-        reader.readAsText(e.target.files[0]);
     }
 
     function clearFilter() { document.getElementById('fStart').value = ''; document.getElementById('fEnd').value = ''; renderHistory(); }
-
     window.onload = init;
 </script>
 </body>
