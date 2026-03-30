@@ -2,35 +2,33 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Ultimate Pro OMS v4</title>
+    <title>Ultimate Pro OMS v4.1</title>
     <style>
         :root { --bg: #0a0a0d; --panel: #111116; --text: #afafb5; --accent: #5e5ce6; --green: #30d158; --red: #ff453a; --border: #242429; --warn: #bf9f00; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; font-size: 13px; }
         
-        /* Top Navigation Tabs */
+        /* Navigation */
         .nav-bar { background: #000; padding: 10px 20px; display: flex; gap: 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
         .nav-btn { background: transparent; color: #666; border: none; font-size: 14px; font-weight: bold; cursor: pointer; padding: 8px 12px; border-radius: 6px; transition: 0.2s; }
         .nav-btn:hover { color: #fff; background: #1a1a21; }
         .nav-btn.active { color: #fff; background: var(--accent); }
 
+        /* Layouts */
         .dashboard { max-width: 1400px; margin: 20px auto; padding: 0 20px; display: none; }
         .dashboard.active { display: grid; gap: 20px; grid-template-columns: 410px 1fr; }
-        
-        /* Dashboard Tab Specific */
         .ds-tab { max-width: 1400px; margin: 20px auto; padding: 0 20px; display: none; }
         .ds-tab.active { display: block; }
         
         .panel { background: var(--panel); padding: 20px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 15px rgba(0,0,0,0.5); }
         .panel-title { margin: 0 0 15px 0; font-size: 14px; color: #f0f0f5; border-bottom: 1px solid var(--border); padding-bottom: 8px; font-weight: 600; text-transform: uppercase; }
         
-        /* Advanced Metrics */
+        /* Metrics & Calendar */
         .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .m-box { background: #15151a; padding: 20px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
         .m-title { font-size: 11px; color: #666; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
         .m-val { font-size: 26px; font-weight: bold; color: #fff; }
         .m-sub { font-size: 11px; color: #888; margin-top: 5px; }
 
-        /* Calendar */
         .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .cal-header button { background: transparent; border: 1px solid var(--border); color: #fff; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
@@ -47,27 +45,32 @@
         .cal-cell.profit .c-pnl { color: var(--green); }
         .cal-cell.loss .c-pnl { color: var(--red); }
 
-        /* Form Elements (from previous) */
+        /* Forms */
         .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
         .dyn-row { display: flex; gap: 4px; margin-bottom: 5px; align-items: center; }
         input, select { padding: 6px 8px; background: #1a1a21; border: 1px solid #2c2c35; border-radius: 4px; color: #fff; text-align: right; font-family: monospace; }
         input:focus, select:focus { outline: none; border-color: var(--accent); }
         .w-mid { width: 90px; } .w-sml { width: 50px; } .w-full { width: 100%; box-sizing: border-box; text-align: left; margin-top: 8px;}
         input[type="text"] { text-align: left; }
-        .btn-add { background: transparent; color: #666; border: 1px solid #333; width: 100%; margin-bottom: 10px; padding: 6px; cursor: pointer; border-radius: 4px; font-size: 11px; }
-        .btn-del { padding: 3px; background: transparent; border: none; color: #444; font-size: 13px; cursor: pointer; }
+        
+        button { padding: 4px 8px; background: #22222a; color: #ccc; border: 1px solid #33333c; border-radius: 4px; cursor: pointer; transition: 0.1s; font-weight: bold; font-size: 11px; }
+        button:hover { background: #2a2a35; color: #fff; }
+        .btn-add { background: transparent; color: #666; border-color: #333; width: 100%; margin-bottom: 10px; padding: 6px; font-size: 11px; }
+        .btn-del { padding: 3px; background: transparent; border: none; color: #444; font-size: 13px; }
         .btn-del:hover { color: var(--red); }
+        
         .result-box { background: #141419; padding: 10px; border-radius: 6px; margin: 10px 0; border-left: 3px solid var(--accent); font-family: monospace; font-size: 11px; color: #888; }
         .res-val { color: #fff; font-weight: bold; }
         
         .action-group { display: flex; gap: 8px; margin-top: 15px; }
-        .btn-open { flex: 1; background: var(--accent); border: none; padding: 10px; font-size: 12px; color: #fff; border-radius: 4px; cursor: pointer; font-weight:bold; }
-        .btn-close { flex: 1; background: var(--red); border: none; padding: 10px; font-size: 12px; color: #fff; border-radius: 4px; cursor: pointer; font-weight:bold;}
+        .btn-open { flex: 1; background: var(--accent); border: none; padding: 10px; font-size: 12px; color: #fff; }
+        .btn-close { flex: 1; background: var(--red); border: none; padding: 10px; font-size: 12px; color: #fff; }
         
+        /* Table */
         .table-wrap { overflow-x: auto; max-height: 600px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; text-align: right; white-space: nowrap; font-size: 12px; }
         th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
-        th { background: #141419; color: #666; position: sticky; top: 0; font-size: 10px; }
+        th { background: #141419; color: #666; position: sticky; top: 0; font-size: 10px; text-transform: uppercase; }
         tr:hover { background-color: #1a1a21; cursor: pointer; }
         .win { color: var(--green); } .loss { color: var(--red); }
     </style>
@@ -80,43 +83,16 @@
 </div>
 
 <div id="tab-dashboard" class="ds-tab active">
-    
     <div class="metrics-grid">
-        <div class="m-box">
-            <div class="m-title">Net P&L</div>
-            <div class="m-val" id="db_pnl">$0.00</div>
-            <div class="m-sub" id="db_pnl_sub">Total Profit/Loss</div>
-        </div>
-        <div class="m-box">
-            <div class="m-title">Profit Factor</div>
-            <div class="m-val" id="db_pf" style="color:#fff;">0.00</div>
-            <div class="m-sub">Gross Profit / Gross Loss</div>
-        </div>
-        <div class="m-box">
-            <div class="m-title">Win Rate</div>
-            <div class="m-val" id="db_winrate" style="color:var(--accent);">0.0%</div>
-            <div class="m-sub" id="db_winrate_sub">0 W / 0 L</div>
-        </div>
-        <div class="m-box">
-            <div class="m-title">Expectancy</div>
-            <div class="m-val" id="db_expectancy">$0.00</div>
-            <div class="m-sub">Expected return per trade</div>
-        </div>
+        <div class="m-box"><div class="m-title">Net P&L</div><div class="m-val" id="db_pnl">$0.00</div><div class="m-sub">Total Profit/Loss</div></div>
+        <div class="m-box"><div class="m-title">Profit Factor</div><div class="m-val" id="db_pf" style="color:#fff;">0.00</div><div class="m-sub">Gross Profit / Gross Loss</div></div>
+        <div class="m-box"><div class="m-title">Win Rate</div><div class="m-val" id="db_winrate" style="color:var(--accent);">0.0%</div><div class="m-sub" id="db_winrate_sub">0 W / 0 L</div></div>
+        <div class="m-box"><div class="m-title">Expectancy</div><div class="m-val" id="db_expectancy">$0.00</div><div class="m-sub">Expected return per trade</div></div>
     </div>
-
     <div class="panel">
-        <div class="cal-header">
-            <button onclick="changeMonth(-1)">◀ Prev</button>
-            <h2 style="margin:0; color:#fff;" id="cal-month-title">June 2024</h2>
-            <button onclick="changeMonth(1)">Next ▶</button>
-        </div>
-        
-        <div class="cal-grid">
-            <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div>
-            <div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
-        </div>
-        <div class="cal-grid" id="cal-days">
-            </div>
+        <div class="cal-header"><button onclick="changeMonth(-1)">◀ Prev</button><h2 style="margin:0; color:#fff;" id="cal-month-title">June 2024</h2><button onclick="changeMonth(1)">Next ▶</button></div>
+        <div class="cal-grid"><div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div></div>
+        <div class="cal-grid" id="cal-days"></div>
     </div>
 </div>
 
@@ -124,8 +100,21 @@
     <div class="panel">
         <input type="hidden" id="editId" value="">
         <div class="panel-title" style="color:var(--accent);">1. ENTRY STRATEGY</div>
-        <div class="row"><span>Ticker</span> <input type="text" id="ticker" class="w-mid" placeholder="BTCUSDT"></div>
-        <div class="row"><span>Entry Setup</span> <select id="setupEntry" style="width:130px;"></select></div>
+        
+        <div class="row"><span>Ticker</span> 
+            <div style="display:flex; gap:5px;">
+                <select id="ticker" style="width:130px;"></select>
+                <button onclick="manageTicker()" style="padding:4px 6px;">⚙️</button>
+            </div>
+        </div>
+        
+        <div class="row"><span>Entry Setup</span> 
+            <div style="display:flex; gap:5px;">
+                <select id="setupEntry" style="width:130px;"></select>
+                <button onclick="manageSetup('E')" style="padding:4px 6px;">⚙️</button>
+            </div>
+        </div>
+        
         <div class="row"><span>Seed($)/Risk(%)</span> <div><input type="number" id="acc" class="w-mid" value="10000" oninput="calc()"> <input type="number" id="risk" class="w-sml" value="0.5" oninput="calc()"></div></div>
         <div class="row"><span>Lev/Mkr/Tkr(%)</span> <div><input type="number" id="lev" class="w-sml" value="10" oninput="calc()"> <input type="number" id="fM" class="w-sml" value="0.02" oninput="calc()"> <input type="number" id="fT" class="w-sml" value="0.05" oninput="calc()"></div></div>
         <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">
@@ -137,7 +126,14 @@
         <div class="result-box" id="entry_res">Awaiting parameters...</div>
 
         <div class="panel-title" style="color:var(--warn); margin-top:20px;">2. EXIT STRATEGY</div>
-        <div class="row"><span>Exit Setup</span> <select id="setupExit" style="width:130px;"></select></div>
+        
+        <div class="row"><span>Exit Setup</span> 
+            <div style="display:flex; gap:5px;">
+                <select id="setupExit" style="width:130px;"></select>
+                <button onclick="manageSetup('X')" style="padding:4px 6px;">⚙️</button>
+            </div>
+        </div>
+
         <div style="font-size:10px; color:#666; font-weight:bold; margin:10px 0 5px;">SCALING-OUT</div>
         <div id="exits_container"></div>
         <button class="btn-add" onclick="addExit()">+ Add Exit Level</button>
@@ -157,9 +153,13 @@
     <div class="panel">
         <div class="panel-title" style="display:flex; justify-content:space-between; align-items:center;">
             TRADE HISTORY
-            <div>
-                <input type="date" id="fStart" style="padding:4px;" onchange="renderHistory()"> ~ <input type="date" id="fEnd" style="padding:4px;" onchange="renderHistory()">
+            <div style="display:flex; gap:5px; align-items:center;">
+                <input type="date" id="fStart" style="padding:4px;" onchange="renderHistory()"> <span style="color:#444;">~</span> <input type="date" id="fEnd" style="padding:4px;" onchange="renderHistory()">
                 <button onclick="clearFilter()" style="padding:4px 6px;">ALL</button>
+                <span style="color:#333; margin:0 5px;">|</span>
+                <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importData(event)">
+                <button onclick="document.getElementById('importFile').click()" style="padding:4px 8px; color:var(--warn); border-color:#444;">IMPORT</button>
+                <button onclick="exportData()" style="padding:4px 8px; color:var(--accent); border-color:#444;">EXPORT</button>
             </div>
         </div>
         <div class="table-wrap">
@@ -174,8 +174,9 @@
 </div>
 
 <script>
-    // --- Data Management (Reuse v3.3 storage for compatibility) ---
+    // --- Data Storage ---
     let trades = JSON.parse(localStorage.getItem('oms_trades_v3_3')) || [];
+    let tickers = JSON.parse(localStorage.getItem('oms_tickers_v4')) || ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
     let setupsE = JSON.parse(localStorage.getItem('oms_setups_e_v3_3')) || ["BREAKOUT", "OBV SIGNAL", "MACRO"];
     let setupsX = JSON.parse(localStorage.getItem('oms_setups_x_v3_3')) || ["VWMA 지지실패", "1.5R 도달", "trailing STOP"];
     
@@ -184,37 +185,93 @@
 
     // --- Tab System ---
     function switchTab(tabId) {
-        document.getElementById('tab-dashboard').classList.remove('active');
-        document.getElementById('tab-execution').classList.remove('active');
-        document.getElementById('btn-tab-dashboard').classList.remove('active');
-        document.getElementById('btn-tab-execution').classList.remove('active');
-        
+        document.querySelectorAll('.ds-tab, .dashboard').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
         document.getElementById(tabId).classList.add('active');
         document.getElementById('btn-' + tabId).classList.add('active');
-        
         if(tabId === 'tab-dashboard') updateDashboard();
     }
 
-    // --- Init ---
+    // --- Init & Dropdown Managers ---
     function init() {
-        let selE = document.getElementById('setupEntry');
-        let selX = document.getElementById('setupExit');
-        setupsE.forEach(s => selE.appendChild(new Option(s, s)));
-        setupsX.forEach(s => selX.appendChild(new Option(s, s)));
-        
+        renderDropdowns();
         renderEntries(); renderExits(); renderHistory(); calc(); updateDashboard();
     }
 
-    // --- Dashboard & Calendar Engine ---
-    let currDate = new Date();
-    
-    function changeMonth(dir) {
-        currDate.setMonth(currDate.getMonth() + dir);
-        updateDashboard();
+    function renderDropdowns() {
+        populateDrop('ticker', tickers);
+        populateDrop('setupEntry', setupsE);
+        populateDrop('setupExit', setupsX);
+    }
+    function populateDrop(id, data) {
+        let sel = document.getElementById(id); sel.innerHTML = '';
+        data.forEach(s => sel.appendChild(new Option(s, s)));
     }
 
+    function manageTicker() {
+        let act = prompt("Manage Tickers.\nType 'ADD' to add, 'DEL' to delete current:").toUpperCase();
+        if(act === 'ADD') {
+            let n = prompt("New Ticker Symbol:");
+            if(n) { tickers.push(n.toUpperCase()); saveDrops(); document.getElementById('ticker').value = n.toUpperCase(); }
+        } else if(act === 'DEL') {
+            let v = document.getElementById('ticker').value;
+            tickers = tickers.filter(t => t !== v); saveDrops();
+        }
+    }
+    
+    function manageSetup(type) {
+        let n = type === 'E' ? 'Entry' : 'Exit';
+        let arr = type === 'E' ? setupsE : setupsX;
+        let id = type === 'E' ? 'setupEntry' : 'setupExit';
+        let act = prompt(`Manage ${n} Setups.\nType 'ADD' to add, 'DEL' to delete current:`).toUpperCase();
+        if(act === 'ADD') {
+            let nS = prompt(`New ${n} Setup Name:`);
+            if(nS) { arr.push(nS.toUpperCase()); saveDrops(); document.getElementById(id).value = nS.toUpperCase(); }
+        } else if(act === 'DEL') {
+            let v = document.getElementById(id).value;
+            if(type === 'E') setupsE = setupsE.filter(s=>s!==v); else setupsX = setupsX.filter(s=>s!==v);
+            saveDrops();
+        }
+    }
+
+    function saveDrops() {
+        localStorage.setItem('oms_tickers_v4', JSON.stringify(tickers));
+        localStorage.setItem('oms_setups_e_v3_3', JSON.stringify(setupsE));
+        localStorage.setItem('oms_setups_x_v3_3', JSON.stringify(setupsX));
+        renderDropdowns();
+    }
+
+    // --- Export / Import ---
+    function exportData() {
+        let blob = new Blob([JSON.stringify(trades)], {type:'application/json'});
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `OMS_Pro_Backup_${new Date().toISOString().split('T')[0]}.json`;
+        link.click();
+    }
+
+    function importData(e) {
+        let reader = new FileReader();
+        reader.onload = (ev) => {
+            try {
+                let d = JSON.parse(ev.target.result);
+                if(Array.isArray(d)) {
+                    trades = d;
+                    localStorage.setItem('oms_trades_v3_3', JSON.stringify(trades));
+                    renderHistory(); updateDashboard();
+                    alert("Data Successfully Restored!");
+                }
+            } catch(err) { alert("Invalid Backup File."); }
+        };
+        reader.readAsText(e.target.files[0]);
+        e.target.value = ''; // Reset file input
+    }
+
+    // --- Dashboard & Calendar ---
+    let currDate = new Date();
+    function changeMonth(dir) { currDate.setMonth(currDate.getMonth() + dir); updateDashboard(); }
+
     function updateDashboard() {
-        // 1. Calculate Advanced Metrics
         let closedTrades = trades.filter(t => t.status === 'CLOSED');
         let grossProfit = 0, grossLoss = 0, wins = 0, losses = 0;
         
@@ -231,7 +288,6 @@
         let avgLoss = losses > 0 ? grossLoss / losses : 0;
         let expectancy = (winRate * avgWin) - ((1 - winRate) * avgLoss);
 
-        // Update DOM Metrics
         let pnlEl = document.getElementById('db_pnl');
         pnlEl.innerText = (netPnl >= 0 ? "+$" : "-$") + Math.abs(netPnl).toFixed(2);
         pnlEl.style.color = netPnl >= 0 ? "var(--green)" : "var(--red)";
@@ -244,24 +300,17 @@
         expEl.innerText = (expectancy >= 0 ? "+$" : "-$") + Math.abs(expectancy).toFixed(2);
         expEl.style.color = expectancy >= 0 ? "var(--green)" : "var(--red)";
 
-        // 2. Render Calendar
-        let y = currDate.getFullYear();
-        let m = currDate.getMonth();
+        let y = currDate.getFullYear(); let m = currDate.getMonth();
         document.getElementById('cal-month-title').innerText = new Date(y, m).toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
         
         let firstDay = new Date(y, m, 1).getDay();
         let daysInMonth = new Date(y, m + 1, 0).getDate();
         
         let calHtml = '';
-        // Empty slots
         for(let i = 0; i < firstDay; i++) { calHtml += `<div class="cal-cell empty"></div>`; }
-        
-        // Days
         for(let d = 1; d <= daysInMonth; d++) {
-            // Format YYYY-MM-DD
             let dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             let dayTrades = closedTrades.filter(t => t.date === dateStr);
-            
             if(dayTrades.length === 0) {
                 calHtml += `<div class="cal-cell" onclick="jumpToHistory('${dateStr}')"><div class="c-date">${d}</div></div>`;
             } else {
@@ -269,43 +318,25 @@
                 let dayWins = dayTrades.filter(t => t.math.pnl >= 0).length;
                 let dayWR = ((dayWins / dayTrades.length) * 100).toFixed(0);
                 let cls = dayPnl >= 0 ? 'profit' : 'loss';
-                
-                calHtml += `
-                    <div class="cal-cell ${cls}" onclick="jumpToHistory('${dateStr}')">
-                        <div class="c-date">${d}</div>
-                        <div class="c-pnl">${dayPnl >= 0 ? '+$'+dayPnl.toFixed(2) : '-$'+Math.abs(dayPnl).toFixed(2)}</div>
-                        <div class="c-trades">${dayTrades.length} trades (${dayWR}%)</div>
-                    </div>`;
+                calHtml += `<div class="cal-cell ${cls}" onclick="jumpToHistory('${dateStr}')"><div class="c-date">${d}</div><div class="c-pnl">${dayPnl >= 0 ? '+$'+dayPnl.toFixed(2) : '-$'+Math.abs(dayPnl).toFixed(2)}</div><div class="c-trades">${dayTrades.length} trades (${dayWR}%)</div></div>`;
             }
         }
         document.getElementById('cal-days').innerHTML = calHtml;
     }
 
     function jumpToHistory(dateStr) {
-        document.getElementById('fStart').value = dateStr;
-        document.getElementById('fEnd').value = dateStr;
-        switchTab('tab-execution');
-        renderHistory();
+        document.getElementById('fStart').value = dateStr; document.getElementById('fEnd').value = dateStr;
+        switchTab('tab-execution'); renderHistory();
     }
 
-    // --- OMS Logic (Same as v3.3) ---
+    // --- OMS Logic ---
     function renderEntries() {
         document.getElementById('entries_container').innerHTML = entries.map((e, i) => `
-            <div class="dyn-row">
-                <input type="number" style="flex:1;" placeholder="Price" value="${e.price}" oninput="entries[${i}].price=this.value; calc()">
-                <select onchange="entries[${i}].type=this.value; calc()"><option value="M" ${e.type==='M'?'selected':''}>Mkr</option><option value="T" ${e.type==='T'?'selected':''}>Tkr</option></select>
-                <input type="number" class="w-sml" placeholder="Wt%" value="${e.weight}" oninput="entries[${i}].weight=this.value; calc()">
-                <button class="btn-del" onclick="entries.splice(${i},1); renderEntries(); calc()">✕</button>
-            </div>`).join('');
+            <div class="dyn-row"><input type="number" style="flex:1;" placeholder="Price" value="${e.price}" oninput="entries[${i}].price=this.value; calc()"><select onchange="entries[${i}].type=this.value; calc()"><option value="M" ${e.type==='M'?'selected':''}>Mkr</option><option value="T" ${e.type==='T'?'selected':''}>Tkr</option></select><input type="number" class="w-sml" placeholder="Wt%" value="${e.weight}" oninput="entries[${i}].weight=this.value; calc()"><button class="btn-del" onclick="entries.splice(${i},1); renderEntries(); calc()">✕</button></div>`).join('');
     }
     function renderExits() {
         document.getElementById('exits_container').innerHTML = exits.map((x, i) => `
-            <div class="dyn-row">
-                <input type="number" style="flex:1;" placeholder="Price" value="${x.price}" oninput="exits[${i}].price=this.value; calc()">
-                <select onchange="exits[${i}].type=this.value; calc()"><option value="M" ${x.type==='M'?'selected':''}>Mkr</option><option value="T" ${x.type==='T'?'selected':''}>Tkr</option></select>
-                <input type="number" class="w-sml" placeholder="Wt%" value="${x.weight}" oninput="exits[${i}].weight=this.value; calc()">
-                <button class="btn-del" onclick="exits.splice(${i},1); renderExits(); calc()">✕</button>
-            </div>`).join('');
+            <div class="dyn-row"><input type="number" style="flex:1;" placeholder="Price" value="${x.price}" oninput="exits[${i}].price=this.value; calc()"><select onchange="exits[${i}].type=this.value; calc()"><option value="M" ${x.type==='M'?'selected':''}>Mkr</option><option value="T" ${x.type==='T'?'selected':''}>Tkr</option></select><input type="number" class="w-sml" placeholder="Wt%" value="${x.weight}" oninput="exits[${i}].weight=this.value; calc()"><button class="btn-del" onclick="exits.splice(${i},1); renderExits(); calc()">✕</button></div>`).join('');
     }
     function addEntry() { entries.push({ price: '', type: 'M', weight: 0 }); renderEntries(); }
     function addExit() { exits.push({ price: '', type: 'M', weight: 0 }); renderExits(); }
@@ -323,26 +354,22 @@
 
         let rAmt = acc * (rPct / 100);
         let sEWt = entries.reduce((s, e) => s + (parseFloat(e.weight)||0), 0);
-        let eRes = document.getElementById('entry_res');
-        let xRes = document.getElementById('exit_res');
+        let eRes = document.getElementById('entry_res'); let xRes = document.getElementById('exit_res');
         let res = { size: 0, avgE: 0, avgX: 0, pnl: 0, r: 0 };
 
         if(sEWt === 100 && sl > 0 && entries.every(e => e.price > 0)) {
             let tCost = 0; let slErr = false;
             entries.forEach(e => {
-                let p = parseFloat(e.price); let w = parseFloat(e.weight)/100;
-                let fee = e.type === 'M' ? fM : fT;
+                let p = parseFloat(e.price); let w = parseFloat(e.weight)/100; let fee = e.type === 'M' ? fM : fT;
                 if((dir === 1 && sl >= p) || (dir === -1 && sl <= p)) slErr = true;
-                tCost += w * (Math.abs(p - sl) + (p * fee));
-                res.avgE += p * w;
+                tCost += w * (Math.abs(p - sl) + (p * fee)); res.avgE += p * w;
             });
             tCost += sl * (slT === 'M' ? fM : fT);
             
             if(slErr) { eRes.innerHTML = `<span style="color:var(--red);">⚠️ SL Direction Mismatch</span>`; }
             else {
                 res.size = rAmt / tCost;
-                let marg = (res.size * res.avgE) / lev;
-                let sld = (marg / acc) * 100;
+                let marg = (res.size * res.avgE) / lev; let sld = (marg / acc) * 100;
                 eRes.innerHTML = `Qty: <span class="res-val">${res.size.toFixed(5)}</span> | AvgE: <span class="res-val">${res.avgE.toFixed(2)}</span><br>Margin: $${marg.toFixed(2)} (<span class="res-val">${sld.toFixed(1)}%</span> App Slider)`;
             }
         } else { eRes.innerHTML = "Awaiting valid inputs..."; }
@@ -377,7 +404,7 @@
             status: stat,
             date: new Date().toISOString().split('T')[0],
             dispDate: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}),
-            ticker: document.getElementById('ticker').value.toUpperCase() || 'UNKNOWN',
+            ticker: document.getElementById('ticker').value,
             dir: parseInt(document.getElementById('dir').value),
             setupEntry: document.getElementById('setupEntry').value, setupExit: document.getElementById('setupExit').value,
             entries: JSON.parse(JSON.stringify(entries)), exits: JSON.parse(JSON.stringify(exits)),
@@ -394,6 +421,12 @@
     function loadIntoForm(id) {
         let t = trades.find(x => x.id === id); if(!t) return;
         document.getElementById('editId').value = t.id;
+        
+        // Smart fallback: If ticker/setup doesn't exist in current dropdowns, add it temporarily so it renders correctly
+        if(t.ticker && !tickers.includes(t.ticker)) { tickers.push(t.ticker); saveDrops(); }
+        if(t.setupEntry && !setupsE.includes(t.setupEntry)) { setupsE.push(t.setupEntry); saveDrops(); }
+        if(t.setupExit && !setupsX.includes(t.setupExit)) { setupsX.push(t.setupExit); saveDrops(); }
+        
         document.getElementById('ticker').value = t.ticker;
         document.getElementById('setupEntry').value = t.setupEntry; document.getElementById('setupExit').value = t.setupExit; 
         document.getElementById('dir').value = t.dir; document.getElementById('sl').value = t.sl; document.getElementById('slType').value = t.slT;
@@ -406,7 +439,7 @@
     function cancelEdit() {
         document.getElementById('editId').value = "";
         entries = [{ price: '', type: 'M', weight: 100 }]; exits = [];
-        document.getElementById('ticker').value = ""; document.getElementById('sl').value = ""; document.getElementById('fineTune').value = 0; document.getElementById('memo').value = "";
+        document.getElementById('sl').value = ""; document.getElementById('fineTune').value = 0; document.getElementById('memo').value = "";
         renderEntries(); renderExits(); calc();
         document.getElementById('btnOpen').innerText = "🟢 OPEN / UPDATE"; document.getElementById('btnCancel').style.display = "none";
     }
