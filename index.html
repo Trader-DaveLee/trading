@@ -2,77 +2,97 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Ultimate Pro OMS v4.1</title>
+    <title>Ultimate Pro OMS v5.0</title>
     <style>
-        :root { --bg: #0a0a0d; --panel: #111116; --text: #afafb5; --accent: #5e5ce6; --green: #30d158; --red: #ff453a; --border: #242429; --warn: #bf9f00; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; font-size: 13px; }
+        :root { --bg: #09090b; --panel: #121216; --text: #a1a1aa; --accent: #3b82f6; --green: #22c55e; --red: #ef4444; --border: #27272a; --warn: #eab308; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; font-size: 13px; }
         
         /* Navigation */
-        .nav-bar { background: #000; padding: 10px 20px; display: flex; gap: 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
-        .nav-btn { background: transparent; color: #666; border: none; font-size: 14px; font-weight: bold; cursor: pointer; padding: 8px 12px; border-radius: 6px; transition: 0.2s; }
-        .nav-btn:hover { color: #fff; background: #1a1a21; }
+        .nav-bar { background: rgba(9, 9, 11, 0.9); backdrop-filter: blur(10px); padding: 12px 24px; display: flex; gap: 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; }
+        .nav-btn { background: transparent; color: #71717a; border: none; font-size: 14px; font-weight: 600; cursor: pointer; padding: 8px 16px; border-radius: 6px; transition: all 0.2s ease; }
+        .nav-btn:hover { color: #f4f4f5; background: #27272a; }
         .nav-btn.active { color: #fff; background: var(--accent); }
 
         /* Layouts */
-        .dashboard { max-width: 1400px; margin: 20px auto; padding: 0 20px; display: none; }
-        .dashboard.active { display: grid; gap: 20px; grid-template-columns: 410px 1fr; }
-        .ds-tab { max-width: 1400px; margin: 20px auto; padding: 0 20px; display: none; }
+        .ds-tab { max-width: 1400px; margin: 24px auto; padding: 0 24px; display: none; animation: fadeIn 0.3s ease; }
         .ds-tab.active { display: block; }
+        .dashboard-grid { display: grid; gap: 24px; grid-template-columns: 420px 1fr; }
+        @media (max-width: 1024px) { .dashboard-grid { grid-template-columns: 1fr; } }
         
-        .panel { background: var(--panel); padding: 20px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 15px rgba(0,0,0,0.5); }
-        .panel-title { margin: 0 0 15px 0; font-size: 14px; color: #f0f0f5; border-bottom: 1px solid var(--border); padding-bottom: 8px; font-weight: 600; text-transform: uppercase; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .panel { background: var(--panel); padding: 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .panel-title { margin: 0 0 16px 0; font-size: 14px; color: #fafafa; border-bottom: 1px solid var(--border); padding-bottom: 10px; font-weight: 700; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center; }
         
         /* Metrics & Calendar */
-        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px; }
-        .m-box { background: #15151a; padding: 20px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; }
-        .m-title { font-size: 11px; color: #666; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
-        .m-val { font-size: 26px; font-weight: bold; color: #fff; }
-        .m-sub { font-size: 11px; color: #888; margin-top: 5px; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .m-box { background: #18181b; padding: 20px; border-radius: 10px; border: 1px solid var(--border); }
+        .m-title { font-size: 12px; color: #a1a1aa; font-weight: 600; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .m-val { font-size: 28px; font-weight: 800; color: #fafafa; }
+        .m-sub { font-size: 11px; color: #71717a; margin-top: 8px; }
 
-        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .cal-header button { background: transparent; border: 1px solid var(--border); color: #fff; padding: 5px 10px; cursor: pointer; border-radius: 4px; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
-        .cal-day-name { text-align: center; font-size: 11px; color: #666; font-weight: bold; padding-bottom: 10px; text-transform: uppercase; }
-        .cal-cell { background: #15151a; border: 1px solid var(--border); border-radius: 6px; min-height: 100px; padding: 10px; display: flex; flex-direction: column; cursor: pointer; transition: 0.1s; }
-        .cal-cell:hover { border-color: #444; background: #1a1a21; transform: translateY(-2px); }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .cal-header button { background: #27272a; border: 1px solid #3f3f46; color: #e4e4e7; padding: 6px 12px; cursor: pointer; border-radius: 6px; font-weight: 600; transition: 0.2s; }
+        .cal-header button:hover { background: #3f3f46; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; }
+        .cal-day-name { text-align: center; font-size: 11px; color: #71717a; font-weight: 700; text-transform: uppercase; padding-bottom: 8px; }
+        .cal-cell { background: #18181b; border: 1px solid var(--border); border-radius: 8px; min-height: 100px; padding: 12px; display: flex; flex-direction: column; cursor: pointer; transition: all 0.2s; }
+        .cal-cell:hover { border-color: #52525b; background: #27272a; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
         .cal-cell.empty { background: transparent; border: none; cursor: default; }
-        .cal-cell.empty:hover { transform: none; background: transparent; }
-        .c-date { font-size: 12px; color: #888; font-weight: bold; align-self: flex-end; margin-bottom: 5px; }
-        .c-pnl { font-size: 15px; font-weight: bold; text-align: center; margin-top: auto; }
-        .c-trades { font-size: 10px; color: #666; text-align: center; margin-top: 5px; }
-        .cal-cell.profit { border-top: 3px solid var(--green); }
-        .cal-cell.loss { border-top: 3px solid var(--red); }
+        .cal-cell.empty:hover { transform: none; box-shadow: none; background: transparent; }
+        .c-date { font-size: 13px; color: #a1a1aa; font-weight: 700; align-self: flex-end; }
+        .c-pnl { font-size: 16px; font-weight: 800; text-align: center; margin-top: auto; }
+        .cal-cell.profit { border-top: 4px solid var(--green); }
+        .cal-cell.loss { border-top: 4px solid var(--red); }
         .cal-cell.profit .c-pnl { color: var(--green); }
         .cal-cell.loss .c-pnl { color: var(--red); }
 
         /* Forms */
-        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
-        .dyn-row { display: flex; gap: 4px; margin-bottom: 5px; align-items: center; }
-        input, select { padding: 6px 8px; background: #1a1a21; border: 1px solid #2c2c35; border-radius: 4px; color: #fff; text-align: right; font-family: monospace; }
-        input:focus, select:focus { outline: none; border-color: var(--accent); }
-        .w-mid { width: 90px; } .w-sml { width: 50px; } .w-full { width: 100%; box-sizing: border-box; text-align: left; margin-top: 8px;}
-        input[type="text"] { text-align: left; }
+        .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .dyn-row { display: flex; gap: 6px; margin-bottom: 8px; align-items: center; }
+        input, select, textarea { padding: 8px 10px; background: #18181b; border: 1px solid #3f3f46; border-radius: 6px; color: #f4f4f5; text-align: right; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; transition: border-color 0.2s; }
+        input[type="text"], input[type="date"], textarea { text-align: left; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .w-mid { width: 100px; } .w-sml { width: 60px; } .w-full { width: 100%; box-sizing: border-box; margin-top: 4px; }
         
-        button { padding: 4px 8px; background: #22222a; color: #ccc; border: 1px solid #33333c; border-radius: 4px; cursor: pointer; transition: 0.1s; font-weight: bold; font-size: 11px; }
-        button:hover { background: #2a2a35; color: #fff; }
-        .btn-add { background: transparent; color: #666; border-color: #333; width: 100%; margin-bottom: 10px; padding: 6px; font-size: 11px; }
-        .btn-del { padding: 3px; background: transparent; border: none; color: #444; font-size: 13px; }
+        button.tool-btn { padding: 6px 10px; background: #27272a; color: #d4d4d8; border: 1px solid #3f3f46; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: 0.2s; }
+        button.tool-btn:hover { background: #3f3f46; color: #fff; }
+        .btn-add { background: transparent; color: #a1a1aa; border: 1px dashed #3f3f46; width: 100%; margin-bottom: 12px; padding: 8px; font-size: 12px; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .btn-add:hover { color: var(--accent); border-color: var(--accent); background: rgba(59,130,246,0.05); }
+        .btn-del { border: none; background: transparent; color: #71717a; font-size: 14px; cursor: pointer; padding: 4px; }
         .btn-del:hover { color: var(--red); }
         
-        .result-box { background: #141419; padding: 10px; border-radius: 6px; margin: 10px 0; border-left: 3px solid var(--accent); font-family: monospace; font-size: 11px; color: #888; }
+        .result-box { background: rgba(59, 130, 246, 0.1); padding: 12px; border-radius: 8px; margin: 12px 0; border-left: 4px solid var(--accent); font-family: monospace; font-size: 12px; color: #d4d4d8; line-height: 1.6; }
         .res-val { color: #fff; font-weight: bold; }
         
-        .action-group { display: flex; gap: 8px; margin-top: 15px; }
-        .btn-open { flex: 1; background: var(--accent); border: none; padding: 10px; font-size: 12px; color: #fff; }
-        .btn-close { flex: 1; background: var(--red); border: none; padding: 10px; font-size: 12px; color: #fff; }
+        .action-group { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-open { flex: 1; background: var(--accent); border: none; padding: 14px; font-size: 13px; font-weight: 700; color: #fff; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .btn-open:hover { background: #2563eb; }
+        .btn-close { flex: 1; background: var(--red); border: none; padding: 14px; font-size: 13px; font-weight: 700; color: #fff; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        .btn-close:hover { background: #dc2626; }
         
         /* Table */
-        .table-wrap { overflow-x: auto; max-height: 600px; overflow-y: auto; border: 1px solid var(--border); border-radius: 6px; }
+        .table-wrap { overflow-x: auto; max-height: 600px; border: 1px solid var(--border); border-radius: 8px; }
         table { width: 100%; border-collapse: collapse; text-align: right; white-space: nowrap; font-size: 12px; }
-        th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
-        th { background: #141419; color: #666; position: sticky; top: 0; font-size: 10px; text-transform: uppercase; }
-        tr:hover { background-color: #1a1a21; cursor: pointer; }
+        th, td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        th { background: #18181b; color: #a1a1aa; position: sticky; top: 0; font-weight: 600; text-transform: uppercase; font-size: 11px; z-index: 10; }
+        tr { transition: background-color 0.15s; }
+        tr:hover { background-color: #27272a; cursor: pointer; }
         .win { color: var(--green); } .loss { color: var(--red); }
+        
+        /* Badges */
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; letter-spacing: 0.5px; }
+        .badge.A { background: rgba(34, 197, 94, 0.2); color: var(--green); border: 1px solid rgba(34, 197, 94, 0.3); }
+        .badge.B { background: rgba(234, 179, 8, 0.2); color: var(--warn); border: 1px solid rgba(234, 179, 8, 0.3); }
+        .badge.C { background: rgba(239, 68, 68, 0.2); color: var(--red); border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-open { color: var(--warn); border: 1px solid var(--warn); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+        .badge-closed { color: #71717a; border: 1px solid #3f3f46; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+
+        /* Chart Vault Preview */
+        .chart-vault { margin-top: 24px; display: none; background: #18181b; padding: 20px; border-radius: 10px; border: 1px solid var(--border); }
+        .vault-links { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+        .vault-btn { display: flex; align-items: center; gap: 8px; background: #27272a; padding: 10px 16px; border-radius: 6px; color: #fff; text-decoration: none; font-weight: 600; font-size: 12px; border: 1px solid #3f3f46; transition: 0.2s; }
+        .vault-btn:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
     </style>
 </head>
 <body>
@@ -85,275 +105,173 @@
 <div id="tab-dashboard" class="ds-tab active">
     <div class="metrics-grid">
         <div class="m-box"><div class="m-title">Net P&L</div><div class="m-val" id="db_pnl">$0.00</div><div class="m-sub">Total Profit/Loss</div></div>
-        <div class="m-box"><div class="m-title">Profit Factor</div><div class="m-val" id="db_pf" style="color:#fff;">0.00</div><div class="m-sub">Gross Profit / Gross Loss</div></div>
+        <div class="m-box"><div class="m-title">Profit Factor</div><div class="m-val" id="db_pf">0.00</div><div class="m-sub">Gross Profit / Gross Loss</div></div>
         <div class="m-box"><div class="m-title">Win Rate</div><div class="m-val" id="db_winrate" style="color:var(--accent);">0.0%</div><div class="m-sub" id="db_winrate_sub">0 W / 0 L</div></div>
-        <div class="m-box"><div class="m-title">Expectancy</div><div class="m-val" id="db_expectancy">$0.00</div><div class="m-sub">Expected return per trade</div></div>
+        <div class="m-box"><div class="m-title">Expectancy</div><div class="m-val" id="db_expectancy">$0.00</div><div class="m-sub">Per Trade Average ($)</div></div>
     </div>
     <div class="panel">
-        <div class="cal-header"><button onclick="changeMonth(-1)">◀ Prev</button><h2 style="margin:0; color:#fff;" id="cal-month-title">June 2024</h2><button onclick="changeMonth(1)">Next ▶</button></div>
+        <div class="cal-header"><button onclick="changeMonth(-1)">◀ Prev</button><h2 id="cal-month-title" style="margin:0; font-size:16px;">Month Year</h2><button onclick="changeMonth(1)">Next ▶</button></div>
         <div class="cal-grid"><div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div></div>
         <div class="cal-grid" id="cal-days"></div>
     </div>
 </div>
 
-<div id="tab-execution" class="dashboard">
-    <div class="panel">
-        <input type="hidden" id="editId" value="">
-        <div class="panel-title" style="color:var(--accent);">1. ENTRY STRATEGY</div>
-        
-        <div class="row"><span>Ticker</span> 
-            <div style="display:flex; gap:5px;">
-                <select id="ticker" style="width:130px;"></select>
-                <button onclick="manageTicker()" style="padding:4px 6px;">⚙️</button>
+<div id="tab-execution" class="ds-tab">
+    <div class="dashboard-grid">
+        <div class="panel">
+            <input type="hidden" id="editId" value="">
+            <div class="panel-title" style="color:var(--accent);">1. ENTRY STRATEGY</div>
+            
+            <div class="row"><span>Ticker / Grade</span> 
+                <div style="display:flex; gap:6px;">
+                    <select id="ticker" class="w-mid"></select>
+                    <button class="tool-btn" onclick="manageDrops('ticker')">⚙️</button>
+                    <select id="grade" style="width:60px; font-weight:bold;">
+                        <option value="A" class="win">A</option>
+                        <option value="B" class="warn">B</option>
+                        <option value="C" class="loss">C</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        
-        <div class="row"><span>Entry Setup</span> 
-            <div style="display:flex; gap:5px;">
-                <select id="setupEntry" style="width:130px;"></select>
-                <button onclick="manageSetup('E')" style="padding:4px 6px;">⚙️</button>
+            
+            <div class="row"><span>Entry Setup</span> 
+                <div style="display:flex; gap:6px;">
+                    <select id="setupEntry" class="w-mid" style="width:130px;"></select>
+                    <button class="tool-btn" onclick="manageDrops('setupE')">⚙️</button>
+                </div>
             </div>
-        </div>
-        
-        <div class="row"><span>Seed($)/Risk(%)</span> <div><input type="number" id="acc" class="w-mid" value="10000" oninput="calc()"> <input type="number" id="risk" class="w-sml" value="0.5" oninput="calc()"></div></div>
-        <div class="row"><span>Lev/Mkr/Tkr(%)</span> <div><input type="number" id="lev" class="w-sml" value="10" oninput="calc()"> <input type="number" id="fM" class="w-sml" value="0.02" oninput="calc()"> <input type="number" id="fT" class="w-sml" value="0.05" oninput="calc()"></div></div>
-        <hr style="border:none; border-top:1px solid var(--border); margin:12px 0;">
-        <div class="row"><span>Pos / Init SL</span> <div><select id="dir" class="w-sml" onchange="calc()"><option value="1">LONG</option><option value="-1">SHORT</option></select> <input type="number" id="sl" class="w-mid" placeholder="SL" oninput="calc()"> <select id="slType" onchange="calc()"><option value="T">Tkr</option><option value="M">Mkr</option></select></div></div>
-        
-        <div style="font-size:10px; color:#666; font-weight:bold; margin:10px 0 5px;">SCALING-IN</div>
-        <div id="entries_container"></div>
-        <button class="btn-add" onclick="addEntry()">+ Add Entry Level</button>
-        <div class="result-box" id="entry_res">Awaiting parameters...</div>
+            
+            <div class="row"><span>Seed($) / Risk(%)</span> <div><input type="number" id="acc" class="w-mid" value="10000" oninput="calc()"> <input type="number" id="risk" class="w-sml" value="0.5" oninput="calc()"></div></div>
+            <div class="row"><span>Lev/Mkr/Tkr(%)</span> <div><input type="number" id="lev" class="w-sml" value="10" oninput="calc()"> <input type="number" id="fM" class="w-sml" value="0.02" oninput="calc()"> <input type="number" id="fT" class="w-sml" value="0.05" oninput="calc()"></div></div>
+            <hr style="border:none; border-top:1px solid var(--border); margin:16px 0;">
+            <div class="row"><span>Pos / Init SL</span> <div><select id="dir" class="w-sml" onchange="calc()"><option value="1">LONG</option><option value="-1">SHORT</option></select> <input type="number" id="sl" class="w-mid" placeholder="SL Price" oninput="calc()"> <select id="slType" onchange="calc()"><option value="T">Tkr</option><option value="M">Mkr</option></select></div></div>
+            
+            <div style="font-size:11px; color:#71717a; font-weight:700; margin:16px 0 8px;">SCALING-IN (100%)</div>
+            <div id="entries_container"></div>
+            <button class="btn-add" onclick="addEntry()">+ Add Entry Level</button>
+            <div class="result-box" id="entry_res">Awaiting valid entry & SL parameters...</div>
 
-        <div class="panel-title" style="color:var(--warn); margin-top:20px;">2. EXIT STRATEGY</div>
-        
-        <div class="row"><span>Exit Setup</span> 
-            <div style="display:flex; gap:5px;">
-                <select id="setupExit" style="width:130px;"></select>
-                <button onclick="manageSetup('X')" style="padding:4px 6px;">⚙️</button>
+            <div class="panel-title" style="color:var(--warn); margin-top:24px;">2. EXIT STRATEGY</div>
+            <div class="row"><span>Exit Setup</span> 
+                <div style="display:flex; gap:6px;">
+                    <select id="setupExit" class="w-mid" style="width:130px;"></select>
+                    <button class="tool-btn" onclick="manageDrops('setupX')">⚙️</button>
+                </div>
             </div>
-        </div>
+            <div style="font-size:11px; color:#71717a; font-weight:700; margin:16px 0 8px;">SCALING-OUT (100%)</div>
+            <div id="exits_container"></div>
+            <button class="btn-add" onclick="addExit()">+ Add Exit Level</button>
+            <div class="result-box" id="exit_res" style="border-left-color:var(--warn);">Exits not configured.</div>
 
-        <div style="font-size:10px; color:#666; font-weight:bold; margin:10px 0 5px;">SCALING-OUT</div>
-        <div id="exits_container"></div>
-        <button class="btn-add" onclick="addExit()">+ Add Exit Level</button>
-        <div class="result-box" id="exit_res">Exits not configured.</div>
-
-        <div class="panel-title" style="color:#eee; margin-top:20px;">3. TRADING DETAILS</div>
-        <div class="row"><span>Fine-tuning(+/-$)</span> <input type="number" id="fineTune" class="w-mid" value="0" oninput="calc()"></div>
-        <input type="text" id="memo" class="w-full" placeholder="Memo...">
-        
-        <div class="action-group">
-            <button class="btn-open" id="btnOpen" onclick="saveTrade('OPEN')">🟢 OPEN / UPDATE</button>
-            <button class="btn-close" id="btnClose" onclick="saveTrade('CLOSED')">🔴 CLOSE POSITION</button>
-        </div>
-        <button id="btnCancel" style="width:100%; margin-top:10px; display:none; background:none; border:1px dashed #444; color:#666; padding:8px;" onclick="cancelEdit()">CANCEL EDIT</button>
-    </div>
-
-    <div class="panel">
-        <div class="panel-title" style="display:flex; justify-content:space-between; align-items:center;">
-            TRADE HISTORY
-            <div style="display:flex; gap:5px; align-items:center;">
-                <input type="date" id="fStart" style="padding:4px;" onchange="renderHistory()"> <span style="color:#444;">~</span> <input type="date" id="fEnd" style="padding:4px;" onchange="renderHistory()">
-                <button onclick="clearFilter()" style="padding:4px 6px;">ALL</button>
-                <span style="color:#333; margin:0 5px;">|</span>
-                <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importData(event)">
-                <button onclick="document.getElementById('importFile').click()" style="padding:4px 8px; color:var(--warn); border-color:#444;">IMPORT</button>
-                <button onclick="exportData()" style="padding:4px 8px; color:var(--accent); border-color:#444;">EXPORT</button>
+            <div class="panel-title" style="color:#fafafa; margin-top:24px;">3. TRADING DETAILS</div>
+            <div class="row"><span>Fine-tuning (+/- $)</span> <input type="number" id="fineTune" class="w-mid" value="0" oninput="calc()"></div>
+            
+            <div style="font-size:11px; color:#71717a; font-weight:700; margin:16px 0 8px;">CHART LINKS (URL)</div>
+            <input type="text" id="img1" class="w-full" placeholder="Entry Chart URL (e.g., tradingview.com/x/...)">
+            <input type="text" id="img2" class="w-full" placeholder="Exit/HTF Chart URL">
+            
+            <textarea id="memo" class="w-full" style="height:80px; margin-top:12px; resize:vertical;" placeholder="Write your trading journal, emotions, and lessons learned..."></textarea>
+            
+            <div class="action-group">
+                <button class="btn-open" onclick="saveTrade('OPEN')" id="btnOpen">🟢 OPEN / UPDATE</button>
+                <button class="btn-close" onclick="saveTrade('CLOSED')" id="btnClose">🔴 CLOSE POSITION</button>
             </div>
+            <button id="btnCancel" style="width:100%; margin-top:12px; display:none; background:transparent; border:1px solid #3f3f46; color:#a1a1aa; padding:10px; border-radius:6px; cursor:pointer;" onclick="cancelEdit()">CANCEL EDIT</button>
         </div>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr><th>STAT</th><th>DATE</th><th>TICKER</th><th>POS</th><th>AVG IN</th><th>AVG OUT</th><th>PnL</th><th>R</th></tr>
-                </thead>
-                <tbody id="history_body"></tbody>
-            </table>
+
+        <div class="panel">
+            <div class="panel-title">
+                TRADE HISTORY
+                <div style="display:flex; gap:8px; align-items:center;">
+                    <input type="date" id="fStart" onchange="renderHistory()"> <span style="color:#71717a;">~</span> <input type="date" id="fEnd" onchange="renderHistory()">
+                    <button class="tool-btn" onclick="clearFilter()">ALL</button>
+                    <span style="color:#3f3f46; margin:0 4px;">|</span>
+                    <input type="file" id="importFile" style="display:none;" accept=".json" onchange="importData(event)">
+                    <button class="tool-btn" style="color:var(--warn); border-color:#52525b;" onclick="document.getElementById('importFile').click()">IMPORT</button>
+                    <button class="tool-btn" style="color:var(--accent); border-color:#52525b;" onclick="exportData()">EXPORT</button>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>STAT</th><th>DATE</th><th>TICKER</th><th>GRD</th><th>POS</th><th>AVG IN</th><th>AVG OUT</th><th>NET PnL</th><th>NET R</th></tr></thead>
+                    <tbody id="history_body"></tbody>
+                </table>
+            </div>
+
+            <div class="chart-vault" id="chart_vault">
+                <div style="font-size:13px; font-weight:700; color:#fafafa; border-bottom:1px solid var(--border); padding-bottom:10px;">
+                    📂 Chart Vault
+                </div>
+                <div class="vault-links" id="vault_links">
+                    </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    // --- Data Storage ---
-    let trades = JSON.parse(localStorage.getItem('oms_trades_v3_3')) || [];
-    let tickers = JSON.parse(localStorage.getItem('oms_tickers_v4')) || ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
-    let setupsE = JSON.parse(localStorage.getItem('oms_setups_e_v3_3')) || ["BREAKOUT", "OBV SIGNAL", "MACRO"];
-    let setupsX = JSON.parse(localStorage.getItem('oms_setups_x_v3_3')) || ["VWMA 지지실패", "1.5R 도달", "trailing STOP"];
+    // --- Data Storage (v5 logic) ---
+    let trades = JSON.parse(localStorage.getItem('oms_trades_v5')) || [];
+    let tickers = JSON.parse(localStorage.getItem('oms_tickers_v5')) || ["BTCUSDT", "ETHUSDT", "SOLUSDT"];
+    let setupsE = JSON.parse(localStorage.getItem('oms_setups_e_v5')) || ["BREAKOUT", "MEAN REVERSION", "MACRO"];
+    let setupsX = JSON.parse(localStorage.getItem('oms_setups_x_v5')) || ["1.5R TARGET", "TRAIL STOP", "TIME STOP"];
     
     let entries = [{ price: '', type: 'M', weight: 100 }];
     let exits = [];
+    let currDate = new Date();
 
-    // --- Tab System ---
-    function switchTab(tabId) {
-        document.querySelectorAll('.ds-tab, .dashboard').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(tabId).classList.add('active');
-        document.getElementById('btn-' + tabId).classList.add('active');
-        if(tabId === 'tab-dashboard') updateDashboard();
-    }
-
-    // --- Init & Dropdown Managers ---
-    function init() {
-        renderDropdowns();
-        renderEntries(); renderExits(); renderHistory(); calc(); updateDashboard();
-    }
-
-    function renderDropdowns() {
-        populateDrop('ticker', tickers);
-        populateDrop('setupEntry', setupsE);
-        populateDrop('setupExit', setupsX);
-    }
-    function populateDrop(id, data) {
-        let sel = document.getElementById(id); sel.innerHTML = '';
-        data.forEach(s => sel.appendChild(new Option(s, s)));
-    }
-
-    function manageTicker() {
-        let act = prompt("Manage Tickers.\nType 'ADD' to add, 'DEL' to delete current:").toUpperCase();
-        if(act === 'ADD') {
-            let n = prompt("New Ticker Symbol:");
-            if(n) { tickers.push(n.toUpperCase()); saveDrops(); document.getElementById('ticker').value = n.toUpperCase(); }
-        } else if(act === 'DEL') {
-            let v = document.getElementById('ticker').value;
-            tickers = tickers.filter(t => t !== v); saveDrops();
-        }
-    }
+    // --- Core Systems ---
+    function init() { renderDrops(); renderEntries(); renderExits(); renderHistory(); calc(); updateDashboard(); }
     
-    function manageSetup(type) {
-        let n = type === 'E' ? 'Entry' : 'Exit';
-        let arr = type === 'E' ? setupsE : setupsX;
-        let id = type === 'E' ? 'setupEntry' : 'setupExit';
-        let act = prompt(`Manage ${n} Setups.\nType 'ADD' to add, 'DEL' to delete current:`).toUpperCase();
+    function switchTab(t) { 
+        document.querySelectorAll('.ds-tab, .nav-btn').forEach(el => el.classList.remove('active')); 
+        document.getElementById(t).classList.add('active'); 
+        document.getElementById('btn-'+t).classList.add('active'); 
+        if(t==='tab-dashboard') updateDashboard(); 
+    }
+
+    // --- Dropdown Management ---
+    function renderDrops() { populate('ticker', tickers); populate('setupEntry', setupsE); populate('setupExit', setupsX); }
+    function populate(id, data) { let sel = document.getElementById(id); sel.innerHTML = ''; data.forEach(s => sel.appendChild(new Option(s, s))); }
+    
+    function manageDrops(type) {
+        let title = type === 'ticker' ? 'Ticker' : (type === 'setupE' ? 'Entry Setup' : 'Exit Setup');
+        let arr = type === 'ticker' ? tickers : (type === 'setupE' ? setupsE : setupsX);
+        let id = type === 'ticker' ? 'ticker' : (type === 'setupE' ? 'setupEntry' : 'setupExit');
+        
+        let act = prompt(`Manage ${title}\nType 'ADD' to create, 'DEL' to delete current:`).toUpperCase();
         if(act === 'ADD') {
-            let nS = prompt(`New ${n} Setup Name:`);
-            if(nS) { arr.push(nS.toUpperCase()); saveDrops(); document.getElementById(id).value = nS.toUpperCase(); }
+            let n = prompt(`New ${title}:`);
+            if(n) { arr.push(n.toUpperCase()); saveDrops(); document.getElementById(id).value = n.toUpperCase(); }
         } else if(act === 'DEL') {
             let v = document.getElementById(id).value;
-            if(type === 'E') setupsE = setupsE.filter(s=>s!==v); else setupsX = setupsX.filter(s=>s!==v);
+            if(type === 'ticker') tickers = tickers.filter(x=>x!==v);
+            else if(type === 'setupE') setupsE = setupsE.filter(x=>x!==v);
+            else setupsX = setupsX.filter(x=>x!==v);
             saveDrops();
         }
     }
-
     function saveDrops() {
-        localStorage.setItem('oms_tickers_v4', JSON.stringify(tickers));
-        localStorage.setItem('oms_setups_e_v3_3', JSON.stringify(setupsE));
-        localStorage.setItem('oms_setups_x_v3_3', JSON.stringify(setupsX));
-        renderDropdowns();
+        localStorage.setItem('oms_tickers_v5', JSON.stringify(tickers));
+        localStorage.setItem('oms_setups_e_v5', JSON.stringify(setupsE));
+        localStorage.setItem('oms_setups_x_v5', JSON.stringify(setupsX));
+        renderDrops();
     }
 
-    // --- Export / Import ---
-    function exportData() {
-        let blob = new Blob([JSON.stringify(trades)], {type:'application/json'});
-        let link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `OMS_Pro_Backup_${new Date().toISOString().split('T')[0]}.json`;
-        link.click();
-    }
-
-    function importData(e) {
-        let reader = new FileReader();
-        reader.onload = (ev) => {
-            try {
-                let d = JSON.parse(ev.target.result);
-                if(Array.isArray(d)) {
-                    trades = d;
-                    localStorage.setItem('oms_trades_v3_3', JSON.stringify(trades));
-                    renderHistory(); updateDashboard();
-                    alert("Data Successfully Restored!");
-                }
-            } catch(err) { alert("Invalid Backup File."); }
-        };
-        reader.readAsText(e.target.files[0]);
-        e.target.value = ''; // Reset file input
-    }
-
-    // --- Dashboard & Calendar ---
-    let currDate = new Date();
-    function changeMonth(dir) { currDate.setMonth(currDate.getMonth() + dir); updateDashboard(); }
-
-    function updateDashboard() {
-        let closedTrades = trades.filter(t => t.status === 'CLOSED');
-        let grossProfit = 0, grossLoss = 0, wins = 0, losses = 0;
-        
-        closedTrades.forEach(t => {
-            let pnl = t.math.pnl;
-            if(pnl >= 0) { grossProfit += pnl; wins++; }
-            else { grossLoss += Math.abs(pnl); losses++; }
-        });
-
-        let netPnl = grossProfit - grossLoss;
-        let pf = grossLoss === 0 ? (grossProfit > 0 ? "MAX" : "0.00") : (grossProfit / grossLoss).toFixed(2);
-        let winRate = closedTrades.length > 0 ? (wins / closedTrades.length) : 0;
-        let avgWin = wins > 0 ? grossProfit / wins : 0;
-        let avgLoss = losses > 0 ? grossLoss / losses : 0;
-        let expectancy = (winRate * avgWin) - ((1 - winRate) * avgLoss);
-
-        let pnlEl = document.getElementById('db_pnl');
-        pnlEl.innerText = (netPnl >= 0 ? "+$" : "-$") + Math.abs(netPnl).toFixed(2);
-        pnlEl.style.color = netPnl >= 0 ? "var(--green)" : "var(--red)";
-        
-        document.getElementById('db_pf').innerText = pf;
-        document.getElementById('db_winrate').innerText = (winRate * 100).toFixed(1) + "%";
-        document.getElementById('db_winrate_sub').innerText = `${wins} W / ${losses} L`;
-        
-        let expEl = document.getElementById('db_expectancy');
-        expEl.innerText = (expectancy >= 0 ? "+$" : "-$") + Math.abs(expectancy).toFixed(2);
-        expEl.style.color = expectancy >= 0 ? "var(--green)" : "var(--red)";
-
-        let y = currDate.getFullYear(); let m = currDate.getMonth();
-        document.getElementById('cal-month-title').innerText = new Date(y, m).toLocaleDateString('en-US', {month: 'long', year: 'numeric'});
-        
-        let firstDay = new Date(y, m, 1).getDay();
-        let daysInMonth = new Date(y, m + 1, 0).getDate();
-        
-        let calHtml = '';
-        for(let i = 0; i < firstDay; i++) { calHtml += `<div class="cal-cell empty"></div>`; }
-        for(let d = 1; d <= daysInMonth; d++) {
-            let dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            let dayTrades = closedTrades.filter(t => t.date === dateStr);
-            if(dayTrades.length === 0) {
-                calHtml += `<div class="cal-cell" onclick="jumpToHistory('${dateStr}')"><div class="c-date">${d}</div></div>`;
-            } else {
-                let dayPnl = dayTrades.reduce((sum, t) => sum + t.math.pnl, 0);
-                let dayWins = dayTrades.filter(t => t.math.pnl >= 0).length;
-                let dayWR = ((dayWins / dayTrades.length) * 100).toFixed(0);
-                let cls = dayPnl >= 0 ? 'profit' : 'loss';
-                calHtml += `<div class="cal-cell ${cls}" onclick="jumpToHistory('${dateStr}')"><div class="c-date">${d}</div><div class="c-pnl">${dayPnl >= 0 ? '+$'+dayPnl.toFixed(2) : '-$'+Math.abs(dayPnl).toFixed(2)}</div><div class="c-trades">${dayTrades.length} trades (${dayWR}%)</div></div>`;
-            }
-        }
-        document.getElementById('cal-days').innerHTML = calHtml;
-    }
-
-    function jumpToHistory(dateStr) {
-        document.getElementById('fStart').value = dateStr; document.getElementById('fEnd').value = dateStr;
-        switchTab('tab-execution'); renderHistory();
-    }
-
-    // --- OMS Logic ---
-    function renderEntries() {
-        document.getElementById('entries_container').innerHTML = entries.map((e, i) => `
-            <div class="dyn-row"><input type="number" style="flex:1;" placeholder="Price" value="${e.price}" oninput="entries[${i}].price=this.value; calc()"><select onchange="entries[${i}].type=this.value; calc()"><option value="M" ${e.type==='M'?'selected':''}>Mkr</option><option value="T" ${e.type==='T'?'selected':''}>Tkr</option></select><input type="number" class="w-sml" placeholder="Wt%" value="${e.weight}" oninput="entries[${i}].weight=this.value; calc()"><button class="btn-del" onclick="entries.splice(${i},1); renderEntries(); calc()">✕</button></div>`).join('');
-    }
-    function renderExits() {
-        document.getElementById('exits_container').innerHTML = exits.map((x, i) => `
-            <div class="dyn-row"><input type="number" style="flex:1;" placeholder="Price" value="${x.price}" oninput="exits[${i}].price=this.value; calc()"><select onchange="exits[${i}].type=this.value; calc()"><option value="M" ${x.type==='M'?'selected':''}>Mkr</option><option value="T" ${x.type==='T'?'selected':''}>Tkr</option></select><input type="number" class="w-sml" placeholder="Wt%" value="${x.weight}" oninput="exits[${i}].weight=this.value; calc()"><button class="btn-del" onclick="exits.splice(${i},1); renderExits(); calc()">✕</button></div>`).join('');
-    }
+    // --- Dynamic Arrays ---
+    function renderEntries() { document.getElementById('entries_container').innerHTML = entries.map((e, i) => `<div class="dyn-row"><input type="number" style="flex:1;" placeholder="Price" value="${e.price}" oninput="entries[${i}].price=this.value; calc()"><select onchange="entries[${i}].type=this.value; calc()"><option value="M" ${e.type==='M'?'selected':''}>Mkr</option><option value="T" ${e.type==='T'?'selected':''}>Tkr</option></select><input type="number" class="w-sml" placeholder="Wt%" value="${e.weight}" oninput="entries[${i}].weight=this.value; calc()"><button class="btn-del" onclick="entries.splice(${i},1); renderEntries(); calc()">✕</button></div>`).join(''); }
+    function renderExits() { document.getElementById('exits_container').innerHTML = exits.map((x, i) => `<div class="dyn-row"><input type="number" style="flex:1;" placeholder="Price" value="${x.price}" oninput="exits[${i}].price=this.value; calc()"><select onchange="exits[${i}].type=this.value; calc()"><option value="M" ${x.type==='M'?'selected':''}>Mkr</option><option value="T" ${x.type==='T'?'selected':''}>Tkr</option></select><input type="number" class="w-sml" placeholder="Wt%" value="${x.weight}" oninput="exits[${i}].weight=this.value; calc()"><button class="btn-del" onclick="exits.splice(${i},1); renderExits(); calc()">✕</button></div>`).join(''); }
     function addEntry() { entries.push({ price: '', type: 'M', weight: 0 }); renderEntries(); }
     function addExit() { exits.push({ price: '', type: 'M', weight: 0 }); renderExits(); }
 
+    // --- Calculator Engine ---
     function calc() {
-        let acc = parseFloat(document.getElementById('acc').value) || 0;
-        let rPct = parseFloat(document.getElementById('risk').value) || 0;
-        let lev = parseFloat(document.getElementById('lev').value) || 1;
-        let fM = parseFloat(document.getElementById('fM').value)/100 || 0;
-        let fT = parseFloat(document.getElementById('fT').value)/100 || 0;
-        let dir = parseInt(document.getElementById('dir').value);
-        let sl = parseFloat(document.getElementById('sl').value) || 0;
-        let slT = document.getElementById('slType').value;
+        let acc = parseFloat(document.getElementById('acc').value) || 0; let riskPct = parseFloat(document.getElementById('risk').value) || 0;
+        let lev = parseFloat(document.getElementById('lev').value) || 1; let fM = parseFloat(document.getElementById('fM').value)/100 || 0; let fT = parseFloat(document.getElementById('fT').value)/100 || 0;
+        let dir = parseInt(document.getElementById('dir').value); let sl = parseFloat(document.getElementById('sl').value) || 0; let slT = document.getElementById('slType').value;
         let fine = parseFloat(document.getElementById('fineTune').value) || 0;
 
-        let rAmt = acc * (rPct / 100);
-        let sEWt = entries.reduce((s, e) => s + (parseFloat(e.weight)||0), 0);
+        let rAmt = acc * (riskPct / 100); let sEWt = entries.reduce((s, e) => s + (parseFloat(e.weight)||0), 0);
         let eRes = document.getElementById('entry_res'); let xRes = document.getElementById('exit_res');
         let res = { size: 0, avgE: 0, avgX: 0, pnl: 0, r: 0 };
 
@@ -366,55 +284,43 @@
             });
             tCost += sl * (slT === 'M' ? fM : fT);
             
-            if(slErr) { eRes.innerHTML = `<span style="color:var(--red);">⚠️ SL Direction Mismatch</span>`; }
+            if(slErr) { eRes.innerHTML = `<span style="color:var(--red); font-weight:bold;">⚠️ SL Direction Error</span>`; }
             else {
-                res.size = rAmt / tCost;
-                let marg = (res.size * res.avgE) / lev; let sld = (marg / acc) * 100;
-                eRes.innerHTML = `Qty: <span class="res-val">${res.size.toFixed(5)}</span> | AvgE: <span class="res-val">${res.avgE.toFixed(2)}</span><br>Margin: $${marg.toFixed(2)} (<span class="res-val">${sld.toFixed(1)}%</span> App Slider)`;
+                res.size = rAmt / tCost; let marg = (res.size * res.avgE) / lev; let sld = (marg / acc) * 100;
+                eRes.innerHTML = `Qty: <span class="res-val">${res.size.toFixed(5)}</span> | AvgE: <span class="res-val">${res.avgE.toFixed(2)}</span><br>Margin: $${marg.toFixed(2)} (<span class="res-val">${sld.toFixed(1)}%</span> Slider)`;
             }
-        } else { eRes.innerHTML = "Awaiting valid inputs..."; }
+        } else { eRes.innerHTML = "Awaiting parameters... (Weight must be 100%)"; }
 
         let sXWt = exits.reduce((s, x) => s + (parseFloat(x.weight)||0), 0);
         if(res.size > 0 && exits.length > 0) {
             let gPnl = 0; let tFee = 0;
             entries.forEach(e => tFee += e.price * res.size * (e.weight/100) * (e.type==='M'?fM:fT));
-            exits.forEach(x => {
-                if(x.price > 0) {
-                    let p = parseFloat(x.price); let w = parseFloat(x.weight)/100;
-                    res.avgX += p * (w / (sXWt/100));
-                    gPnl += (p - res.avgE) * dir * (res.size * w);
-                    tFee += p * (res.size * w) * (x.type==='M'?fM:fT);
-                }
-            });
-            res.pnl = (gPnl - (tFee * (sXWt/100))) + fine; 
-            res.r = res.pnl / rAmt;
+            exits.forEach(x => { if(x.price > 0) { let p = parseFloat(x.price); let w = parseFloat(x.weight)/100; res.avgX += p * (w / (sXWt/100)); gPnl += (p - res.avgE) * dir * (res.size * w); tFee += p * (res.size * w) * (x.type==='M'?fM:fT); } });
+            res.pnl = (gPnl - (tFee * (sXWt/100))) + fine; res.r = res.pnl / rAmt;
             xRes.innerHTML = `AvgX: <span class="res-val">${res.avgX.toFixed(2)}</span> (${sXWt}%)<br>Net PnL: <span class="${res.pnl>=0?'win':'loss'}">$${res.pnl.toFixed(2)}</span> (${res.r.toFixed(2)}R)`;
         } else { xRes.innerHTML = "Exits not configured."; }
         return res;
     }
 
+    // --- Save & Edit ---
     function saveTrade(stat) {
-        let r = calc();
-        if(r.size === 0) return alert("Calculate entry first.");
-        if(stat === 'CLOSED' && exits.reduce((s, x) => s + (parseFloat(x.weight)||0), 0) !== 100) return alert("Total Exit Weight must be 100% to CLOSE.");
+        let r = calc(); if(r.size === 0) return alert("Valid entry required.");
+        if(stat === 'CLOSED' && exits.reduce((s, x) => s + (parseFloat(x.weight)||0), 0) !== 100) return alert("Total Exit Wt must be 100% to close.");
 
         let id = document.getElementById('editId').value;
         let trade = {
             id: id ? parseInt(id) : Date.now(),
-            status: stat,
-            date: new Date().toISOString().split('T')[0],
-            dispDate: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}),
-            ticker: document.getElementById('ticker').value,
-            dir: parseInt(document.getElementById('dir').value),
-            setupEntry: document.getElementById('setupEntry').value, setupExit: document.getElementById('setupExit').value,
+            status: stat, date: new Date().toISOString().split('T')[0], dispDate: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}),
+            ticker: document.getElementById('ticker').value, grade: document.getElementById('grade').value, dir: parseInt(document.getElementById('dir').value),
+            setupE: document.getElementById('setupEntry').value, setupX: document.getElementById('setupExit').value,
             entries: JSON.parse(JSON.stringify(entries)), exits: JSON.parse(JSON.stringify(exits)),
             sl: document.getElementById('sl').value, slT: document.getElementById('slType').value,
             fine: parseFloat(document.getElementById('fineTune').value), memo: document.getElementById('memo').value,
-            math: r
+            img1: document.getElementById('img1').value.trim(), img2: document.getElementById('img2').value.trim(), math: r
         };
 
         if(id) trades = trades.map(t => t.id === trade.id ? trade : t); else trades.unshift(trade);
-        localStorage.setItem('oms_trades_v3_3', JSON.stringify(trades));
+        localStorage.setItem('oms_trades_v5', JSON.stringify(trades));
         cancelEdit(); renderHistory(); updateDashboard();
     }
 
@@ -422,53 +328,99 @@
         let t = trades.find(x => x.id === id); if(!t) return;
         document.getElementById('editId').value = t.id;
         
-        // Smart fallback: If ticker/setup doesn't exist in current dropdowns, add it temporarily so it renders correctly
+        // Smart fallback to dropdowns
         if(t.ticker && !tickers.includes(t.ticker)) { tickers.push(t.ticker); saveDrops(); }
-        if(t.setupEntry && !setupsE.includes(t.setupEntry)) { setupsE.push(t.setupEntry); saveDrops(); }
-        if(t.setupExit && !setupsX.includes(t.setupExit)) { setupsX.push(t.setupExit); saveDrops(); }
+        if(t.setupE && !setupsE.includes(t.setupE)) { setupsE.push(t.setupE); saveDrops(); }
+        if(t.setupX && !setupsX.includes(t.setupX)) { setupsX.push(t.setupX); saveDrops(); }
         
-        document.getElementById('ticker').value = t.ticker;
-        document.getElementById('setupEntry').value = t.setupEntry; document.getElementById('setupExit').value = t.setupExit; 
+        document.getElementById('ticker').value = t.ticker; document.getElementById('grade').value = t.grade || 'B';
+        document.getElementById('setupEntry').value = t.setupE; document.getElementById('setupExit').value = t.setupX;
         document.getElementById('dir').value = t.dir; document.getElementById('sl').value = t.sl; document.getElementById('slType').value = t.slT;
-        document.getElementById('fineTune').value = t.fine; document.getElementById('memo').value = t.memo;
+        document.getElementById('fineTune').value = t.fine || 0; document.getElementById('memo').value = t.memo || '';
+        document.getElementById('img1').value = t.img1 || ''; document.getElementById('img2').value = t.img2 || '';
+        
         entries = JSON.parse(JSON.stringify(t.entries)); exits = JSON.parse(JSON.stringify(t.exits));
         renderEntries(); renderExits(); calc();
         document.getElementById('btnOpen').innerText = "🟢 UPDATE POSITION"; document.getElementById('btnCancel').style.display = "block";
+        
+        openChartVault(t);
     }
 
     function cancelEdit() {
-        document.getElementById('editId').value = "";
-        entries = [{ price: '', type: 'M', weight: 100 }]; exits = [];
+        document.getElementById('editId').value = ""; entries = [{ price: '', type: 'M', weight: 100 }]; exits = [];
         document.getElementById('sl').value = ""; document.getElementById('fineTune').value = 0; document.getElementById('memo').value = "";
+        document.getElementById('img1').value = ""; document.getElementById('img2').value = "";
         renderEntries(); renderExits(); calc();
         document.getElementById('btnOpen').innerText = "🟢 OPEN / UPDATE"; document.getElementById('btnCancel').style.display = "none";
+        document.getElementById('chart_vault').style.display = "none";
     }
 
-    function renderHistory() {
-        let tbody = document.getElementById('history_body'); tbody.innerHTML = '';
-        let start = document.getElementById('fStart').value; let end = document.getElementById('fEnd').value;
-        let filtered = trades;
-        if(start) filtered = filtered.filter(t => t.date >= start);
-        if(end) filtered = filtered.filter(t => t.date <= end);
+    // --- Safe Chart Vault ---
+    function openChartVault(t) {
+        let vault = document.getElementById('chart_vault'); let linksBox = document.getElementById('vault_links');
+        let linksHtml = '';
+        if(t.img1) linksHtml += `<a href="${t.img1}" target="_blank" class="vault-btn">📈 View Entry Chart 1</a>`;
+        if(t.img2) linksHtml += `<a href="${t.img2}" target="_blank" class="vault-btn">📉 View Exit Chart 2</a>`;
+        
+        if(linksHtml !== '') { vault.style.display = 'block'; linksBox.innerHTML = linksHtml; } 
+        else { vault.style.display = 'none'; }
+    }
 
+    // --- Dashboard & Analytics ---
+    function updateDashboard() {
+        let closed = trades.filter(t => t.status === 'CLOSED');
+        let wins = closed.filter(t => t.math.pnl >= 0); let losses = closed.filter(t => t.math.pnl < 0);
+        let gProf = wins.reduce((s,t) => s + t.math.pnl, 0); let gLoss = Math.abs(losses.reduce((s,t) => s + t.math.pnl, 0));
+        let net = gProf - gLoss; let wr = closed.length > 0 ? (wins.length / closed.length) * 100 : 0;
+        let pf = gLoss === 0 ? (gProf > 0 ? "MAX" : "0.00") : (gProf / gLoss).toFixed(2);
+        let exp = (wr/100 * (wins.length>0 ? gProf/wins.length : 0)) - ((1-wr/100) * (losses.length>0 ? gLoss/losses.length : 0));
+
+        let pEl = document.getElementById('db_pnl'); pEl.innerText = (net>=0?'+$':'-$')+Math.abs(net).toFixed(2); pEl.style.color = net>=0?'var(--green)':'var(--red)';
+        document.getElementById('db_pf').innerText = pf; document.getElementById('db_winrate').innerText = wr.toFixed(1) + '%';
+        document.getElementById('db_winrate_sub').innerText = `${wins.length} W / ${losses.length} L`;
+        let eEl = document.getElementById('db_expectancy'); eEl.innerText = (exp>=0?'+$':'-$')+Math.abs(exp).toFixed(2); eEl.style.color = exp>=0?'var(--green)':'var(--red)';
+
+        let y = currDate.getFullYear(); let m = currDate.getMonth();
+        document.getElementById('cal-month-title').innerText = new Date(y, m).toLocaleDateString('en-US', {month:'long', year:'numeric'});
+        let first = new Date(y, m, 1).getDay(); let total = new Date(y, m+1, 0).getDate();
+        let h = ''; for(let i=0; i<first; i++) h += '<div class="cal-cell empty"></div>';
+        for(let d=1; d<=total; d++) {
+            let ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            let dt = closed.filter(t => t.date === ds);
+            if(dt.length === 0) h += `<div class="cal-cell" onclick="jumpTo('${ds}')"><div class="c-date">${d}</div></div>`;
+            else {
+                let dp = dt.reduce((s,t)=>s+t.math.pnl,0);
+                h += `<div class="cal-cell ${dp>=0?'profit':'loss'}" onclick="jumpTo('${ds}')"><div class="c-date">${d}</div><div class="c-pnl">${(dp>=0?'+$':'-$')+Math.abs(dp).toFixed(2)}</div></div>`;
+            }
+        }
+        document.getElementById('cal-days').innerHTML = h;
+    }
+
+    function changeMonth(d) { currDate.setMonth(currDate.getMonth()+d); updateDashboard(); }
+    function jumpTo(d) { document.getElementById('fStart').value = d; document.getElementById('fEnd').value = d; switchTab('tab-execution'); renderHistory(); }
+
+    function renderHistory() {
+        let b = document.getElementById('history_body'); b.innerHTML = '';
+        let start = document.getElementById('fStart').value; let end = document.getElementById('fEnd').value;
+        let filtered = trades; if(start) filtered = filtered.filter(t => t.date >= start); if(end) filtered = filtered.filter(t => t.date <= end);
         filtered.forEach(t => {
-            let m = t.math;
-            let tr = document.createElement('tr');
-            tr.onclick = () => loadIntoForm(t.id);
-            tr.innerHTML = `
-                <td><span style="color:${t.status==='OPEN'?'var(--warn)':'#666'}; font-weight:bold;">${t.status}</span></td>
-                <td><span style="color:#666;">${t.dispDate}</span></td>
-                <td style="font-weight:bold; color:#fff;">${t.ticker}</td>
+            let tr = document.createElement('tr'); tr.onclick = () => loadIntoForm(t.id);
+            let grd = t.grade || 'B';
+            tr.innerHTML = `<td><span class="${t.status==='OPEN'?'badge-open':'badge-closed'}">${t.status}</span></td>
+                <td><span style="color:#71717a;">${t.dispDate}</span></td><td style="font-weight:700; color:#fafafa;">${t.ticker}</td>
+                <td><span class="badge ${grd}">${grd}</span></td>
                 <td class="${t.dir===1?'win':'loss'}">${t.dir===1?'Long':'Short'}</td>
-                <td>${m.avgE.toFixed(2)}</td><td>${m.avgX > 0 ? m.avgX.toFixed(2) : '-'}</td>
-                <td class="${m.pnl>=0?'win':'loss'}">${t.status==='OPEN'?'-':'$'+m.pnl.toFixed(2)}</td>
-                <td class="${m.pnl>=0?'win':'loss'}">${t.status==='OPEN'?'-':m.r.toFixed(2)+'R'}</td>
-            `;
-            tbody.appendChild(tr);
+                <td>${t.math.avgE.toFixed(2)}</td><td>${t.math.avgX > 0 ? t.math.avgX.toFixed(2) : '-'}</td>
+                <td class="${t.math.pnl>=0?'win':'loss'}" style="font-weight:700;">${t.status==='OPEN'?'-':'$'+t.math.pnl.toFixed(2)}</td>
+                <td class="${t.math.pnl>=0?'win':'loss'}">${t.status==='OPEN'?'-':t.math.r.toFixed(2)+'R'}</td>`;
+            b.appendChild(tr);
         });
     }
 
     function clearFilter() { document.getElementById('fStart').value = ''; document.getElementById('fEnd').value = ''; renderHistory(); }
+    function exportData() { let b = new Blob([JSON.stringify(trades)], {type:'application/json'}); let l = document.createElement("a"); l.href = URL.createObjectURL(b); l.download = `OMS_v5_Backup_${new Date().toISOString().split('T')[0]}.json`; l.click(); }
+    function importData(e) { let r = new FileReader(); r.onload = (ev) => { try { let d = JSON.parse(ev.target.result); if(Array.isArray(d)) { trades = d; localStorage.setItem('oms_trades_v5', JSON.stringify(trades)); renderHistory(); updateDashboard(); alert("Restored Successfully!"); } } catch(err) { alert("Invalid File."); } }; r.readAsText(e.target.files[0]); }
+
     window.onload = init;
 </script>
 </body>
